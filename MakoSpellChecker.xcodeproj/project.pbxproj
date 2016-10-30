@@ -1,0 +1,519 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		08BB907C1DC611380045E375 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB907B1DC611380045E375 /* AppDelegate.swift */; };
+		08BB907E1DC611380045E375 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB907D1DC611380045E375 /* ViewController.swift */; };
+		08BB90801DC611380045E375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08BB907F1DC611380045E375 /* Assets.xcassets */; };
+		08BB90831DC611380045E375 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08BB90811DC611380045E375 /* Main.storyboard */; };
+		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
+		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		08BB908A1DC611380045E375 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08BB90701DC611380045E375 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 08BB90771DC611380045E375;
+			remoteInfo = MakoSpellChecker;
+		};
+		08BB90951DC611380045E375 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08BB90701DC611380045E375 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 08BB90771DC611380045E375;
+			remoteInfo = MakoSpellChecker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		08BB90781DC611380045E375 /* MakoSpellChecker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakoSpellChecker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		08BB907B1DC611380045E375 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		08BB907D1DC611380045E375 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		08BB907F1DC611380045E375 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		08BB90821DC611380045E375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		08BB90841DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08BB90891DC611380045E375 /* MakoSpellCheckerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MakoSpellCheckerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakoSpellCheckerTests.swift; sourceTree = "<group>"; };
+		08BB908F1DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08BB90941DC611380045E375 /* MakoSpellCheckerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MakoSpellCheckerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakoSpellCheckerUITests.swift; sourceTree = "<group>"; };
+		08BB909A1DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		08BB90751DC611380045E375 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90861DC611380045E375 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90911DC611380045E375 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08BB906F1DC611380045E375 = {
+			isa = PBXGroup;
+			children = (
+				08BB907A1DC611380045E375 /* MakoSpellChecker */,
+				08BB908C1DC611380045E375 /* MakoSpellCheckerTests */,
+				08BB90971DC611380045E375 /* MakoSpellCheckerUITests */,
+				08BB90791DC611380045E375 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		08BB90791DC611380045E375 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				08BB90781DC611380045E375 /* MakoSpellChecker.app */,
+				08BB90891DC611380045E375 /* MakoSpellCheckerTests.xctest */,
+				08BB90941DC611380045E375 /* MakoSpellCheckerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		08BB907A1DC611380045E375 /* MakoSpellChecker */ = {
+			isa = PBXGroup;
+			children = (
+				08BB907B1DC611380045E375 /* AppDelegate.swift */,
+				08BB907D1DC611380045E375 /* ViewController.swift */,
+				08BB907F1DC611380045E375 /* Assets.xcassets */,
+				08BB90811DC611380045E375 /* Main.storyboard */,
+				08BB90841DC611380045E375 /* Info.plist */,
+			);
+			path = MakoSpellChecker;
+			sourceTree = "<group>";
+		};
+		08BB908C1DC611380045E375 /* MakoSpellCheckerTests */ = {
+			isa = PBXGroup;
+			children = (
+				08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */,
+				08BB908F1DC611380045E375 /* Info.plist */,
+			);
+			path = MakoSpellCheckerTests;
+			sourceTree = "<group>";
+		};
+		08BB90971DC611380045E375 /* MakoSpellCheckerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */,
+				08BB909A1DC611380045E375 /* Info.plist */,
+			);
+			path = MakoSpellCheckerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		08BB90771DC611380045E375 /* MakoSpellChecker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08BB909D1DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellChecker" */;
+			buildPhases = (
+				08BB90741DC611380045E375 /* Sources */,
+				08BB90751DC611380045E375 /* Frameworks */,
+				08BB90761DC611380045E375 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MakoSpellChecker;
+			productName = MakoSpellChecker;
+			productReference = 08BB90781DC611380045E375 /* MakoSpellChecker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		08BB90881DC611380045E375 /* MakoSpellCheckerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08BB90A01DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerTests" */;
+			buildPhases = (
+				08BB90851DC611380045E375 /* Sources */,
+				08BB90861DC611380045E375 /* Frameworks */,
+				08BB90871DC611380045E375 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08BB908B1DC611380045E375 /* PBXTargetDependency */,
+			);
+			name = MakoSpellCheckerTests;
+			productName = MakoSpellCheckerTests;
+			productReference = 08BB90891DC611380045E375 /* MakoSpellCheckerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		08BB90931DC611380045E375 /* MakoSpellCheckerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08BB90A31DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerUITests" */;
+			buildPhases = (
+				08BB90901DC611380045E375 /* Sources */,
+				08BB90911DC611380045E375 /* Frameworks */,
+				08BB90921DC611380045E375 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08BB90961DC611380045E375 /* PBXTargetDependency */,
+			);
+			name = MakoSpellCheckerUITests;
+			productName = MakoSpellCheckerUITests;
+			productReference = 08BB90941DC611380045E375 /* MakoSpellCheckerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08BB90701DC611380045E375 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = "Makoto Yamashita";
+				TargetAttributes = {
+					08BB90771DC611380045E375 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
+					08BB90881DC611380045E375 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 08BB90771DC611380045E375;
+					};
+					08BB90931DC611380045E375 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 08BB90771DC611380045E375;
+					};
+				};
+			};
+			buildConfigurationList = 08BB90731DC611380045E375 /* Build configuration list for PBXProject "MakoSpellChecker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 08BB906F1DC611380045E375;
+			productRefGroup = 08BB90791DC611380045E375 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				08BB90771DC611380045E375 /* MakoSpellChecker */,
+				08BB90881DC611380045E375 /* MakoSpellCheckerTests */,
+				08BB90931DC611380045E375 /* MakoSpellCheckerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		08BB90761DC611380045E375 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08BB90801DC611380045E375 /* Assets.xcassets in Resources */,
+				08BB90831DC611380045E375 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90871DC611380045E375 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90921DC611380045E375 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		08BB90741DC611380045E375 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08BB907E1DC611380045E375 /* ViewController.swift in Sources */,
+				08BB907C1DC611380045E375 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90851DC611380045E375 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08BB90901DC611380045E375 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		08BB908B1DC611380045E375 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 08BB90771DC611380045E375 /* MakoSpellChecker */;
+			targetProxy = 08BB908A1DC611380045E375 /* PBXContainerItemProxy */;
+		};
+		08BB90961DC611380045E375 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 08BB90771DC611380045E375 /* MakoSpellChecker */;
+			targetProxy = 08BB90951DC611380045E375 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		08BB90811DC611380045E375 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				08BB90821DC611380045E375 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		08BB909B1DC611380045E375 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		08BB909C1DC611380045E375 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		08BB909E1DC611380045E375 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		08BB909F1DC611380045E375 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		08BB90A11DC611380045E375 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellCheckerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.app/Contents/MacOS/MakoSpellChecker";
+			};
+			name = Debug;
+		};
+		08BB90A21DC611380045E375 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellCheckerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.app/Contents/MacOS/MakoSpellChecker";
+			};
+			name = Release;
+		};
+		08BB90A41DC611380045E375 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = MakoSpellChecker;
+			};
+			name = Debug;
+		};
+		08BB90A51DC611380045E375 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = MakoSpellChecker;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		08BB90731DC611380045E375 /* Build configuration list for PBXProject "MakoSpellChecker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08BB909B1DC611380045E375 /* Debug */,
+				08BB909C1DC611380045E375 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		08BB909D1DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellChecker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08BB909E1DC611380045E375 /* Debug */,
+				08BB909F1DC611380045E375 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		08BB90A01DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08BB90A11DC611380045E375 /* Debug */,
+				08BB90A21DC611380045E375 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		08BB90A31DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08BB90A41DC611380045E375 /* Debug */,
+				08BB90A51DC611380045E375 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08BB90701DC611380045E375 /* Project object */;
+}
