@@ -28,5 +28,22 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSExecutable</key>
+			<string>MakoSpellChecker</string>
+			<key>NSLanguages</key>
+			<array>
+				<string>English</string>
+			</array>
+			<key>NSMenuItem</key>
+			<dict/>
+			<key>NSPortName</key>
+			<string>MakoSpellChecker</string>
+			<key>NSSpellChecker</key>
+			<string>MakoSpellChecker</string>
+		</dict>
+	</array>
 </dict>
 </plist>
