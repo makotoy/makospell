@@ -12,19 +12,36 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     var aSpellProcess : Process?
     var aSpellInputPipe : Pipe?
     var aSpellOutputPipe : Pipe?
+    var spell_checker: OpaquePointer?
     
     override init() {
-        super.init()
         
         aSpellProcess = Process()
+        //setup aspell process
         aSpellProcess?.launchPath = "/usr/local/bin/aspell"
         aSpellProcess?.arguments = ["-a", "--conf=/Users/makotoy/.aspell.conf"]
         aSpellInputPipe = Pipe()
         aSpellOutputPipe = Pipe()
         aSpellProcess?.standardInput = aSpellInputPipe
         aSpellProcess?.standardOutput = aSpellOutputPipe
-        
+        // launch aspell process
         aSpellProcess?.launch()
+        
+        spell_checker = nil
+        var spell_config = new_aspell_config()
+        aspell_config_replace(spell_config, "lang", "en_US")
+        aspell_config_replace(spell_config, "dict-dir", "/Library/Application Support/cocoAspell/aspell6-en-6.0-0")
+        aspell_config_replace(spell_config, "home-dir", "/Users/makotoy/Library/Preferences/cocoAspell/")
+        aspell_config_replace(spell_config, "personal", "en.pws")
+
+        let possible_err = new_aspell_speller(spell_config)
+        if (aspell_error_number(possible_err) != 0) {
+            let error_msg = String.init(cString: aspell_error_message(possible_err))
+            NSLog(error_msg)
+        } else {
+            spell_checker = to_aspell_speller(possible_err)
+        }
+        super.init()
     }
 //    func spellServer(_ sender: NSSpellServer,
 //                     check stringToCheck: String,

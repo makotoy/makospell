@@ -54,6 +54,16 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(resRange.location == NSNotFound)
     }
     
+    func testASpellLib() {
+        guard let spell_checker = checkerDelegate.spell_checker else {
+            XCTFail()
+            return
+        }
+        
+        let as_res = aspell_speller_check(spell_checker, "foo", 3)
+        XCTAssert(as_res != 0)
+    }
+    
     func testASpellCorrect() {
         let testStr = "good\n"
         let testData = testStr.data(using: String.Encoding.utf8)

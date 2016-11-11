@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		083788041DCEA37F003DC6A4 /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
+		08AF3C841DD5E0AF004E5BFF /* libaspell.la in Resources */ = {isa = PBXBuildFile; fileRef = 08AF3C831DD5E0AF004E5BFF /* libaspell.la */; };
+		08AF3C861DD5E0CE004E5BFF /* libaspell.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 08AF3C851DD5E0CE004E5BFF /* libaspell.dylib */; };
 		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
 		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
 		08BB90A81DC611770045E375 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A61DC611770045E375 /* main.swift */; };
@@ -32,6 +34,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		08AF3C831DD5E0AF004E5BFF /* libaspell.la */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = libaspell.la; path = ../../../../../../usr/local/lib/libaspell.la; sourceTree = "<group>"; };
+		08AF3C851DD5E0CE004E5BFF /* libaspell.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libaspell.dylib; path = ../../../../../../usr/local/lib/libaspell.dylib; sourceTree = "<group>"; };
+		08AF3C871DD5E0ED004E5BFF /* aspell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aspell.h; path = ../../../../../usr/local/include/aspell.h; sourceTree = SOURCE_ROOT; };
+		08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MakoSpellChecker-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		08BB90781DC611380045E375 /* MakoSpellChecker.service */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakoSpellChecker.service; sourceTree = BUILT_PRODUCTS_DIR; };
 		08BB90841DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08BB90891DC611380045E375 /* MakoSpellCheckerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MakoSpellCheckerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08AF3C861DD5E0CE004E5BFF /* libaspell.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +102,10 @@
 				08BB90A61DC611770045E375 /* main.swift */,
 				08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */,
 				08BB90841DC611380045E375 /* Info.plist */,
+				08AF3C831DD5E0AF004E5BFF /* libaspell.la */,
+				08AF3C851DD5E0CE004E5BFF /* libaspell.dylib */,
+				08AF3C871DD5E0ED004E5BFF /* aspell.h */,
+				08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */,
 			);
 			path = MakoSpellChecker;
 			sourceTree = "<group>";
@@ -185,6 +196,7 @@
 				TargetAttributes = {
 					08BB90771DC611380045E375 = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 					};
 					08BB90881DC611380045E375 = {
@@ -224,6 +236,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08AF3C841DD5E0AF004E5BFF /* libaspell.la in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,11 +339,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-laspell";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -369,9 +385,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-laspell";
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
@@ -380,11 +399,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = service;
 			};
@@ -394,11 +419,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = service;
 			};
