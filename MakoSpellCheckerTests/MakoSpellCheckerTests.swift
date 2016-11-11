@@ -8,12 +8,16 @@
 
 import XCTest
 @testable import MakoSpellChecker
+//import MYSpellCheckerDelegate
 
 class MakoSpellCheckerTests: XCTestCase {
+    var spellServer: NSSpellServer!
+    var checkerDelegate: MYSpellCheckerDelegate!
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        spellServer = NSSpellServer()
+        checkerDelegate = MYSpellCheckerDelegate()
     }
     
     override func tearDown() {
@@ -21,16 +25,21 @@ class MakoSpellCheckerTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testTrue() {
+        XCTAssert(true)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//    func testFooCapture() {
+//        var dummyCounter: Int = 0
+//        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "foo bar", language: "en", wordCount: &dummyCounter, countOnly: false)
+//        XCTAssert(NSEqualRanges(resRange, NSRange(location: 0, length: 3)))
+//    }
     
+//    func testPerformanceExample() {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
+//    
 }

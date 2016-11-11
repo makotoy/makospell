@@ -1,6 +1,6 @@
 //
 //  main.swift
-//  MYSpellChecker
+//  MakoSpellChecker
 //
 //  Created by Makoto Yamashita on ’16.10.30.
 //  Copyright © 2016 Makoto Yamashita. All rights reserved.
@@ -15,7 +15,9 @@ if (aServer.registerLanguage("English", byVendor: "MakoSpellChecker")) {
     NSLog("MakoSpell Checker running.")
     aServer.delegate = myDelegate
     aServer.run()
-    print("Unexpected death of MakoSpell Checker!")
+    
+    // We should not reach here
+    NSLog("Unexpected death of MakoSpell Checker!")
 } else {
-    print("Unable to check in MakoSpell Checker.")
+    NSLog("Unable to check in MakoSpell Checker.")
 }

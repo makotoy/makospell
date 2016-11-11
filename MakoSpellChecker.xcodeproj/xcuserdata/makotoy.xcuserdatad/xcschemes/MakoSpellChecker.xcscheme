@@ -20,16 +20,26 @@
                ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-      </BuildActionEntries>
-   </BuildAction>
-   <TestAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO">
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "08BB90931DC611380045E375"
+               BuildableName = "MakoSpellCheckerUITests.xctest"
+               BlueprintName = "MakoSpellCheckerUITests"
+               ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "08BB90881DC611380045E375"
@@ -37,7 +47,15 @@
                BlueprintName = "MakoSpellCheckerTests"
                ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
             </BuildableReference>
-         </TestableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "NO">
+      <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
@@ -45,6 +63,16 @@
                BlueprintIdentifier = "08BB90931DC611380045E375"
                BuildableName = "MakoSpellCheckerUITests.xctest"
                BlueprintName = "MakoSpellCheckerUITests"
+               ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "08BB90881DC611380045E375"
+               BuildableName = "MakoSpellCheckerTests.xctest"
+               BlueprintName = "MakoSpellCheckerTests"
                ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -58,6 +86,13 @@
             ReferencedContainer = "container:MakoSpellChecker.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "XCInjectBundleInto"
+            value = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.service/Contents/MacOS/MakoSpellChecker"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

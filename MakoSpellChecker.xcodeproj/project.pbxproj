@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		083788041DCEA37F003DC6A4 /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
 		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
 		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
 		08BB90A81DC611770045E375 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A61DC611770045E375 /* main.swift */; };
@@ -265,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */,
+				083788041DCEA37F003DC6A4 /* MYSpellCheckerDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,7 +415,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.app/Contents/MacOS/MakoSpellChecker";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.service/Contents/MacOS/MakoSpellChecker";
 			};
 			name = Debug;
 		};
@@ -428,7 +430,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.app/Contents/MacOS/MakoSpellChecker";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MakoSpellChecker.service/Contents/MacOS/MakoSpellChecker";
 			};
 			name = Release;
 		};
@@ -436,11 +438,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = MakoSpellChecker;
 			};
@@ -450,11 +454,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = MakoSpellChecker;
 			};
@@ -479,6 +485,7 @@
 				08BB909F1DC611380045E375 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		08BB90A01DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerTests" */ = {
 			isa = XCConfigurationList;
@@ -487,6 +494,7 @@
 				08BB90A21DC611380045E375 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		08BB90A31DC611380045E375 /* Build configuration list for PBXNativeTarget "MakoSpellCheckerUITests" */ = {
 			isa = XCConfigurationList;
@@ -495,6 +503,7 @@
 				08BB90A51DC611380045E375 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
