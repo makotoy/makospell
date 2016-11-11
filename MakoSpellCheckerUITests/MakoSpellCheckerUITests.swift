@@ -42,8 +42,8 @@ class MakoSpellCheckerUITests: XCTestCase {
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         var dummyCounter: Int = 0
-        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "foo bar", language: "English", wordCount: &dummyCounter, countOnly: false)
-        XCTAssert(NSEqualRanges(resRange, NSRange(location: 0, length: 3)))
+        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "beedybardy bar", language: "English", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(NSEqualRanges(resRange, NSRange(location: 0, length: 10)))
     }
     
     func testPooCheck() {
@@ -60,10 +60,13 @@ class MakoSpellCheckerUITests: XCTestCase {
             return
         }
         
-        let as_res = aspell_speller_check(spell_checker, "foo", 3)
-        XCTAssert(as_res != 0)
+        var as_res = aspell_speller_check(spell_checker, "beedybaady", -1)
+        XCTAssert(as_res == 0)
+        
+        as_res = aspell_speller_check(spell_checker, "bar", -1)
+        XCTAssert(as_res == 1)
     }
-    
+
     func testASpellCorrect() {
         let testStr = "good\n"
         let testData = testStr.data(using: String.Encoding.utf8)

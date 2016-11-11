@@ -29,14 +29,16 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         
         spell_checker = nil
         var spell_config = new_aspell_config()
-        aspell_config_replace(spell_config, "lang", "en_US")
-        aspell_config_replace(spell_config, "dict-dir", "/Library/Application Support/cocoAspell/aspell6-en-6.0-0")
-        aspell_config_replace(spell_config, "home-dir", "/Users/makotoy/Library/Preferences/cocoAspell/")
-        aspell_config_replace(spell_config, "personal", "en.pws")
+        aspell_config_replace(spell_config, "conf", "/Users/makotoy/.aspell.conf")
+//        aspell_config_replace(spell_config, "encoding", "utf-8")
 
+        let langCon = String(cString:aspell_config_retrieve(spell_config, "lang"))
+        NSLog("lang conf: \(langCon)")
+        let encCon = String(cString:aspell_config_retrieve(spell_config, "encoding"))
+        NSLog("encoding conf: \(encCon)")
         let possible_err = new_aspell_speller(spell_config)
         if (aspell_error_number(possible_err) != 0) {
-            let error_msg = String.init(cString: aspell_error_message(possible_err))
+            let error_msg = String(cString: aspell_error_message(possible_err))
             NSLog(error_msg)
         } else {
             spell_checker = to_aspell_speller(possible_err)
@@ -68,9 +70,17 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String,
                      wordCount: UnsafeMutablePointer<Int>,
                      countOnly: Bool) -> NSRange {
-        let strToCheckAsNSStr = stringToCheck as NSString
-        let matchRan = strToCheckAsNSStr.range(of: "foo")
-        return matchRan
+        let wordsArray = stringToCheck.components(separatedBy: " ")
+        for (_, wordToCheck) in wordsArray.enumerated() {
+            let as_res = aspell_speller_check(spell_checker, wordToCheck, -1)
+            if (as_res == 0) {
+                let strToCheckAsNSStr = stringToCheck as NSString
+                let matchRan = strToCheckAsNSStr.range(of: wordToCheck)
+                return matchRan
+            }
+        }
+        let notfoundrange = NSRange(location: NSNotFound, length: 0)
+        return notfoundrange
     }
     func spellServer(_ sender: NSSpellServer,
                      didForgetWord word: String,
