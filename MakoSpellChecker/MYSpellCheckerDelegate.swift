@@ -80,9 +80,13 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String,
                      wordCount: UnsafeMutablePointer<Int>,
                      countOnly: Bool) -> NSRange {
-        let wordBdry = CharacterSet(charactersIn: " -\t\n,.;:")
+        var wordBdry = CharacterSet.letters.inverted
+        wordBdry.remove(charactersIn:"\\")
         let wordsArray = stringToCheck.components(separatedBy: wordBdry)
         for (_, wordToCheck) in wordsArray.enumerated() {
+            if (wordToCheck.hasPrefix("\\")) {
+                continue
+            }
             let as_res = aspell_speller_check(spell_checker, wordToCheck, -1)
             if (as_res == 0) {
                 let strToCheckAsNSStr = stringToCheck as NSString
