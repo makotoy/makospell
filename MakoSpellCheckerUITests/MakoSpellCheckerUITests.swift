@@ -67,6 +67,18 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(as_res == 1)
     }
 
+    func testFindMissMethod() {
+        var wordPtr: Int = 0
+        let theRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "few baddybaddywordy", language: "English", wordCount: &wordPtr, countOnly: false)
+        XCTAssert(NSEqualRanges(theRange, NSRange(location: 4, length: 15)))
+    }
+    
+    func testSuggMethod() {
+        let suggs = checkerDelegate.spellServer(spellServer, suggestGuessesForWord: "takke", inLanguage: "English")
+        XCTAssert(suggs != nil)
+        XCTAssert(suggs![0] == "take")
+    }
+    
     func testASpellCorrect() {
         let testStr = "good\n"
         let testData = testStr.data(using: String.Encoding.utf8)

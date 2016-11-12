@@ -28,7 +28,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         aSpellProcess?.launch()
         
         spell_checker = nil
-        var spell_config = new_aspell_config()
+        let spell_config = new_aspell_config()
         aspell_config_replace(spell_config, "conf", "/Users/makotoy/.aspell.conf")
 //        aspell_config_replace(spell_config, "encoding", "utf-8")
 
@@ -39,6 +39,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         } else {
             spell_checker = to_aspell_speller(possible_err)
         }
+        delete_aspell_config(spell_config)
         super.init()
     }
 //    func spellServer(_ sender: NSSpellServer,
@@ -53,7 +54,20 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      suggestGuessesForWord word: String,
                      inLanguage language: String) -> [String]? {
-        return ["bar", "poo"]
+        let suggestions = aspell_speller_suggest(spell_checker, word, -1)
+        let elements = aspell_word_list_elements(suggestions)
+        var nextWordPtr: UnsafePointer<Int8>?
+        nextWordPtr = aspell_string_enumeration_next(elements)
+        if (nextWordPtr == nil) {
+            return nil
+        }
+        var suggestedWords = [String]()
+        while (nextWordPtr != nil) {
+            suggestedWords.append(String(cString: nextWordPtr!))
+            nextWordPtr = aspell_string_enumeration_next(elements)
+        }
+        delete_aspell_string_list(elements)
+        return suggestedWords
     }
 //    func spellServer(_ sender: NSSpellServer,
 //                     checkGrammarIn stringToCheck: String,
