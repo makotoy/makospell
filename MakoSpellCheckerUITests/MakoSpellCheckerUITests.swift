@@ -55,7 +55,59 @@ class MakoSpellCheckerUITests: XCTestCase {
         let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "text \\texmacro bar", language: "English", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location == NSNotFound)
     }
+
+    func testNonAlphabets() {
+        var dummyCounter: Int = 0
+        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "こんにちは", language: "English", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(resRange.location == NSNotFound)
+    }
+
+    func testCorrectGroupCheck() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "valid string", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert(res == nil)
+        XCTAssert(dummyCounter == 2)
+    }
+
+    func testIgnoreCJKGroupCheck() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "こんにちは", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert(res == nil)
+    }
     
+    func testMisspellAfterCJK() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "こんにちは invvalid", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 1))
+        XCTAssert(dummyCounter == 1)
+    }
+    
+    func testIgnoreTexGroupCheck() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "\\mathbb strring", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 1))
+        XCTAssert(dummyCounter == 1)
+    }
+
+    func testAfterNewlineCheck() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "an my\nstrring", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 1))
+        XCTAssert(dummyCounter == 2)
+        XCTAssert((res![0].range.location == 6) && (res![0].range.length == 7))
+    }
+
+    func testIncorrectGroupCheck() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "new invalidd string baddy", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 2))
+        XCTAssert(res![0].resultType == NSTextCheckingResult.CheckingType.spelling)
+        XCTAssert(NSEqualRanges(res![0].range, NSRange(location: 4, length: 8)))
+        XCTAssert(res![1].resultType == NSTextCheckingResult.CheckingType.spelling)
+        XCTAssert(NSEqualRanges(res![1].range, NSRange(location: 20, length: 5)))
+        XCTAssert(dummyCounter == 1)
+    }
+
     func testASpellLib() {
         guard let spell_checker = checkerDelegate.spell_checker else {
             XCTFail()
@@ -80,54 +132,5 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(suggs != nil)
         XCTAssert(suggs![0] == "take")
     }
-    
-    func testASpellCorrect() {
-        let testStr = "good\n"
-        let testData = testStr.data(using: String.Encoding.utf8)
-        let expectation = self.expectation(description:"test aspell process completed")
-        let outHandler = {(handle: FileHandle) -> Void in
-            let outData = handle.availableData
-            let outStr = String(data: outData, encoding: String.Encoding.utf8)
-            
-            if (outStr?.substring(to: (outStr?.index(after: (outStr?.startIndex)!))!) == "*") {
-                handle.closeFile()
-                expectation.fulfill()
-            }
-        }
-        XCTAssertNotNil(checkerDelegate.aSpellInputPipe)
-        checkerDelegate.aSpellOutputPipe?.fileHandleForReading.readabilityHandler = outHandler
-        checkerDelegate.aSpellInputPipe?.fileHandleForWriting.write(testData!)
-        
-        self.waitForExpectations(timeout: 3, handler: {(error: Error?) -> Void in
-            if ((error) != nil) {
-                XCTFail("aspell process failed.")
-            }
-        })
-    }
-    
-    func testASpellInorrect() {
-        let testStr = "baddybaddywordy\n"
-        let testData = testStr.data(using: String.Encoding.utf8)
-        let expectation = self.expectation(description:"test aspell process completed")
-        let outHandler = {(handle: FileHandle) -> Void in
-            let outData = handle.availableData
-            let outStr = String(data: outData, encoding: String.Encoding.utf8)
-            
-            if (outStr?.substring(to: (outStr?.index(after: (outStr?.startIndex)!))!) == "&") {
-                NSLog("Got suggestion for baddybaddywordy: \(outStr)")
-                handle.closeFile()
-                expectation.fulfill()
-            }
-        }
-        XCTAssertNotNil(checkerDelegate.aSpellInputPipe)
-        checkerDelegate.aSpellOutputPipe?.fileHandleForReading.readabilityHandler = outHandler
-        checkerDelegate.aSpellInputPipe?.fileHandleForWriting.write(testData!)
-        
-        self.waitForExpectations(timeout: 3, handler: {(error: Error?) -> Void in
-            if ((error) != nil) {
-                XCTFail("aspell process failed.")
-            }
-        })
-    }
-    
+
 }

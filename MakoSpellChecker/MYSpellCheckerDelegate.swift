@@ -9,27 +9,13 @@
 import Foundation
 
 class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
-    var aSpellProcess : Process?
-    var aSpellInputPipe : Pipe?
-    var aSpellOutputPipe : Pipe?
-    var spell_checker: OpaquePointer?
+    var spell_checker: OpaquePointer? = nil
+    var doc_checker: OpaquePointer? = nil
     
     override init() {
-        
-        aSpellProcess = Process()
-        //setup aspell process
-        aSpellProcess?.launchPath = "/usr/local/bin/aspell"
-        aSpellProcess?.arguments = ["-a", "--conf=/Users/makotoy/.aspell.conf"]
-        aSpellInputPipe = Pipe()
-        aSpellOutputPipe = Pipe()
-        aSpellProcess?.standardInput = aSpellInputPipe
-        aSpellProcess?.standardOutput = aSpellOutputPipe
-        // launch aspell process
-        aSpellProcess?.launch()
-        
-        spell_checker = nil
         let spell_config = new_aspell_config()
         aspell_config_replace(spell_config, "conf", "/Users/makotoy/.aspell.conf")
+//        aspell_config_replace(spell_config, "mode", "tex")
 //        aspell_config_replace(spell_config, "encoding", "utf-8")
 
         let possible_err = new_aspell_speller(spell_config)
@@ -38,34 +24,77 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             NSLog(error_msg)
         } else {
             spell_checker = to_aspell_speller(possible_err)
+            let possible_err_doc = new_aspell_document_checker(spell_checker)
+            if (aspell_error_number(possible_err_doc) != 0) {
+                let error_msg_doc = String(cString:aspell_error_message(possible_err_doc))
+                NSLog(error_msg_doc)
+            } else {
+                doc_checker = to_aspell_document_checker(possible_err_doc)
+            }
         }
         delete_aspell_config(spell_config)
         super.init()
     }
-//    func spellServer(_ sender: NSSpellServer,
-//                     check stringToCheck: String,
-//                     offset: Int,
-//                     types checkingTypes: NSTextCheckingTypes,
-//                     options: [String : Any]? = nil,
-//                     orthography: NSOrthography?,
-//                     wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
-//    return []
-//    }
+    func spellServer(_ sender: NSSpellServer,
+                     check stringToCheck: String,
+                     offset: Int,
+                     types checkingTypes: NSTextCheckingTypes,
+                     options: [String : Any]? = nil,
+                     orthography: NSOrthography?,
+                     wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
+        if ((checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) == 0) {
+            return nil
+        }
+        if (doc_checker == nil) {
+            return nil
+        }
+        var utf8Rep = stringToCheck.utf8CString
+        utf8Rep.withUnsafeBufferPointer { ptr in
+            aspell_document_checker_process(doc_checker, ptr.baseAddress!, -1)
+        }
+        var error_loc = aspell_document_checker_next_misspelling(doc_checker)
+        if (error_loc.len == 0) {
+            wordCount.pointee = countWords(string: stringToCheck)
+            return nil
+        }
+        if (error_loc.offset == 0) {
+            wordCount.pointee = 0
+        } else {
+            utf8Rep.withUnsafeMutableBufferPointer { ptr in
+                let cStrUntilOffsetData = Data(bytesNoCopy: ptr.baseAddress!, count: Int(error_loc.offset), deallocator: Data.Deallocator.none)
+                let toFirstMisspell = String(data: cStrUntilOffsetData, encoding: String.Encoding.utf8)
+                wordCount.pointee = countWords(string: toFirstMisspell)
+            }
+        }
+        var spellRes = [NSTextCheckingResult]()
+        repeat {
+            utf8Rep.withUnsafeMutableBufferPointer { ptr in
+                let cStrBeforeMissData = Data(bytesNoCopy: ptr.baseAddress!, count: Int(error_loc.offset), deallocator: Data.Deallocator.none)
+                let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8)
+                let beforeMissLen = (beforeMiss != nil) ? (beforeMiss! as NSString).length : 0
+                let cStrMissData = Data(bytesNoCopy: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len), deallocator: Data.Deallocator.none)
+                let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8)
+                let thisRange = NSRange(location: offset + beforeMissLen, length: (missWord! as NSString).length)
+                spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
+            }
+            error_loc = aspell_document_checker_next_misspelling(doc_checker)
+        } while (error_loc.len != 0)
+        return spellRes
+    }
     func spellServer(_ sender: NSSpellServer,
                      suggestGuessesForWord word: String,
                      inLanguage language: String) -> [String]? {
         let suggestions = aspell_speller_suggest(spell_checker, word, -1)
         let elements = aspell_word_list_elements(suggestions)
-        var nextWordPtr: UnsafePointer<Int8>?
-        nextWordPtr = aspell_string_enumeration_next(elements)
+        var nextWordPtr = aspell_string_enumeration_next(elements)
         if (nextWordPtr == nil) {
             return nil
         }
         var suggestedWords = [String]()
-        while (nextWordPtr != nil) {
+        repeat {
             suggestedWords.append(String(cString: nextWordPtr!))
             nextWordPtr = aspell_string_enumeration_next(elements)
-        }
+        } while (nextWordPtr != nil)
         delete_aspell_string_list(elements)
         return suggestedWords
     }
@@ -80,20 +109,29 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String,
                      wordCount: UnsafeMutablePointer<Int>,
                      countOnly: Bool) -> NSRange {
+        // split into words, ignore punctuations except backslash (tex)
+        let nonalphas = CharacterSet(charactersIn: "A"..."z").inverted
         var wordBdry = CharacterSet.letters.inverted
         wordBdry.remove(charactersIn:"\\")
         let wordsArray = stringToCheck.components(separatedBy: wordBdry)
         for (_, wordToCheck) in wordsArray.enumerated() {
+            // ignore tex macros
             if (wordToCheck.hasPrefix("\\")) {
                 continue
             }
-            let as_res = aspell_speller_check(spell_checker, wordToCheck, -1)
-            if (as_res == 0) {
+            // ignore unless alphabets
+            let nonalpharan = wordToCheck.rangeOfCharacter(from: nonalphas)
+            if (nonalpharan != nil) {
+                continue
+            }
+            // return range of first unknown word
+            if (0 == aspell_speller_check(spell_checker, wordToCheck, -1)) {
                 let strToCheckAsNSStr = stringToCheck as NSString
                 let matchRan = strToCheckAsNSStr.range(of: wordToCheck)
                 return matchRan
             }
         }
+        // all words known
         return NSRange(location: NSNotFound, length: 0)
     }
     func spellServer(_ sender: NSSpellServer,
@@ -104,13 +142,17 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
+        let utf8Rep = word.utf8CString
+        utf8Rep.withUnsafeBufferPointer { ptr in
+            aspell_speller_add_to_personal(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
+            aspell_speller_save_all_word_lists(spell_checker)
+        }
     }
-    func spellServer(_ sender: NSSpellServer,
-                     suggestCompletionsForPartialWordRange range: NSRange,
-                     in string: String,
-                     language: String) -> [String]? {
-        return ["boongaboonga"]
-    }
+//    func spellServer(_ sender: NSSpellServer,
+//                     suggestCompletionsForPartialWordRange range: NSRange,
+//                     in string: String,
+//                     language: String) -> [String]? {
+//    }
     func spellServer(_ sender: NSSpellServer,
                      recordResponse response: Int,
                      toCorrection correction: String,
@@ -118,4 +160,12 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String) {
         
     }
+}
+
+func countWords(string: String?) -> Int {
+    if (string == nil || string! == "") {
+        return 0
+    }
+    let wordsArray = string!.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+    return wordsArray.filter({str in (str != "")}).count
 }
