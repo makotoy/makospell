@@ -83,11 +83,18 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         repeat {
             utf8Rep.withUnsafeMutableBufferPointer { ptr in
                 let cStrBeforeMissData = Data(bytesNoCopy: ptr.baseAddress!, count: Int(error_loc.offset), deallocator: Data.Deallocator.none)
-                let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8)
-                let beforeMissLen = (beforeMiss != nil) ? (beforeMiss! as NSString).length : 0
+                guard let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8) else {
+                    NSLog("could not convert string portion before misstake, offset \(error_loc.offset)")
+                    return
+                }
+                let beforeMissLen = (beforeMiss as NSString).length
                 let cStrMissData = Data(bytesNoCopy: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len), deallocator: Data.Deallocator.none)
-                let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8)
-                let thisRange = NSRange(location: offset + beforeMissLen, length: (missWord! as NSString).length)
+                guard let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8) else {
+                    NSLog("could not convert missspell, offset \(error_loc.offset), len \(error_loc.len)")
+                    return
+                }
+                let missLen = (missWord as NSString).length
+                let thisRange = NSRange(location: offset + beforeMissLen, length: missLen)
                 spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
             }
             error_loc = aspell_document_checker_next_misspelling(doc_checker)
@@ -158,8 +165,8 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         NSLog("learning \(word)")
         let utf8Rep = word.utf8CString
         utf8Rep.withUnsafeBufferPointer { ptr in
-            aspell_speller_add_to_personal(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
-            aspell_speller_save_all_word_lists(spell_checker)
+            aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
+//            aspell_speller_save_all_word_lists(spell_checker)
         }
     }
 //    func spellServer(_ sender: NSSpellServer,
@@ -175,7 +182,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         // only called if accepts, rejects, edits
         NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
         switch response {
-        case NSCorrectionResponse.accepted.rawValue:
+        case NSCorrectionResponse.accepted.rawValue, NSCorrectionResponse.edited.rawValue:
             NSLog("accepted correction \(correction) for \(word)")
             let wordUtf8Rep = word.utf8CString
             let corrUtf8Rep = correction.utf8CString
@@ -184,14 +191,6 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                     aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, Int32(wordUtf8Rep.count), corrPtr.baseAddress!, Int32(corrUtf8Rep.count))
                 }
             }
-            
-        case NSCorrectionResponse.ignored.rawValue:
-            NSLog("trying to ignore \(word)")
-            let utf8Rep = word.utf8CString
-            utf8Rep.withUnsafeBufferPointer { ptr in
-                aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
-            }
-
         default: break
         }
     }

@@ -123,7 +123,7 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(dummyCounter == 0)
         XCTAssert((res![0].range.location == 0) && (res![0].range.length == 8))
         
-        checkerDelegate.spellServer(spellServer, recordResponse: NSCorrectionResponse.ignored.rawValue, toCorrection: "string", forWord: "strrring", language: "English")
+        checkerDelegate.spellServer(spellServer, didLearnWord: "strrring", inLanguage:"English")
 
         let res2 = checkerDelegate.spellServer(spellServer, check: "strrring", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
         XCTAssert((res2 == nil) || (res2!.count == 0))
