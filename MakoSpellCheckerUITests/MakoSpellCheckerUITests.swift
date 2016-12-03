@@ -107,6 +107,28 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(NSEqualRanges(res![1].range, NSRange(location: 20, length: 5)))
         XCTAssert(dummyCounter == 1)
     }
+    
+    func testCheckOffset() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "strring", offset: 5, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 1))
+        XCTAssert(dummyCounter == 0)
+        XCTAssert((res![0].range.location == 5) && (res![0].range.length == 7))
+    }
+
+    func testLearnSession() {
+        var dummyCounter: Int = 0
+        let res = checkerDelegate.spellServer(spellServer, check: "strrring", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res != nil) && (res!.count == 1))
+        XCTAssert(dummyCounter == 0)
+        XCTAssert((res![0].range.location == 0) && (res![0].range.length == 8))
+        
+        checkerDelegate.spellServer(spellServer, recordResponse: NSCorrectionResponse.ignored.rawValue, toCorrection: "string", forWord: "strrring", language: "English")
+
+        let res2 = checkerDelegate.spellServer(spellServer, check: "strrring", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
+        XCTAssert((res2 == nil) || (res2!.count == 0))
+        XCTAssert(dummyCounter == 1)
+    }
 
     func testASpellLib() {
         guard let spell_checker = checkerDelegate.spell_checker else {

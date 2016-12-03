@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppKit
 
 class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     var spell_checker: OpaquePointer? = nil
@@ -14,9 +15,17 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     
     override init() {
         let spell_config = new_aspell_config()
-        aspell_config_replace(spell_config, "conf", "/Users/makotoy/.aspell.conf")
-//        aspell_config_replace(spell_config, "mode", "tex")
-//        aspell_config_replace(spell_config, "encoding", "utf-8")
+        var aspell_conf_path = NSHomeDirectory() + "/.aspell.conf"
+        let env_var_dic = ProcessInfo().environment
+        if (env_var_dic["MYSpellCheckerAspellConf"] != nil) {
+            aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
+        }
+        let fileMan = FileManager()
+        if (fileMan.fileExists(atPath: aspell_conf_path)) {
+            aspell_config_replace(spell_config, "conf", aspell_conf_path)
+        } else {
+            NSLog("Could not find Aspell config file \(aspell_conf_path)")
+        }
 
         let possible_err = new_aspell_speller(spell_config)
         if (aspell_error_number(possible_err) != 0) {
@@ -35,6 +44,10 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         delete_aspell_config(spell_config)
         super.init()
     }
+    
+//    deinit {
+//    }
+    
     func spellServer(_ sender: NSSpellServer,
                      check stringToCheck: String,
                      offset: Int,
@@ -142,6 +155,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
+        NSLog("learning \(word)")
         let utf8Rep = word.utf8CString
         utf8Rep.withUnsafeBufferPointer { ptr in
             aspell_speller_add_to_personal(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
@@ -158,7 +172,28 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      toCorrection correction: String,
                      forWord word: String,
                      language: String) {
-        
+        // only called if accepts, rejects, edits
+        NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
+        switch response {
+        case NSCorrectionResponse.accepted.rawValue:
+            NSLog("accepted correction \(correction) for \(word)")
+            let wordUtf8Rep = word.utf8CString
+            let corrUtf8Rep = correction.utf8CString
+            wordUtf8Rep.withUnsafeBufferPointer { wrdPtr in
+                corrUtf8Rep.withUnsafeBufferPointer{ corrPtr in
+                    aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, Int32(wordUtf8Rep.count), corrPtr.baseAddress!, Int32(corrUtf8Rep.count))
+                }
+            }
+            
+        case NSCorrectionResponse.ignored.rawValue:
+            NSLog("trying to ignore \(word)")
+            let utf8Rep = word.utf8CString
+            utf8Rep.withUnsafeBufferPointer { ptr in
+                aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
+            }
+
+        default: break
+        }
     }
 }
 
