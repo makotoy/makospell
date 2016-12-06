@@ -17,18 +17,25 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         let spell_config = new_aspell_config()
         var aspell_conf_path = NSHomeDirectory() + "/.aspell.conf"
         let env_var_dic = ProcessInfo().environment
-        if (env_var_dic["MYSpellCheckerAspellConf"] != nil) {
+        if env_var_dic["MYSpellCheckerAspellConf"] != nil {
             aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
         }
         let fileMan = FileManager()
-        if (fileMan.fileExists(atPath: aspell_conf_path)) {
+        if fileMan.fileExists(atPath: aspell_conf_path) {
             aspell_config_replace(spell_config, "conf", aspell_conf_path)
         } else {
             NSLog("Could not find Aspell config file \(aspell_conf_path)")
         }
-
+        let encoding_name = String(cString:aspell_config_retrieve(spell_config, "encoding"))
+        if encoding_name != "utf-8" {
+            if encoding_name == "none" {
+                aspell_config_replace(spell_config, "encoding", "utf-8")
+            } else {
+                NSLog("Aspell conf has encoding \(encoding_name), but Mac OS X spell system would give UTF-8 data (like non-breaking space 0xc2 0xa0)")
+            }
+        }
         let possible_err = new_aspell_speller(spell_config)
-        if (aspell_error_number(possible_err) != 0) {
+        if aspell_error_number(possible_err) != 0 {
             let error_msg = String(cString: aspell_error_message(possible_err))
             NSLog(error_msg)
         } else {
@@ -55,10 +62,10 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      options: [String : Any]? = nil,
                      orthography: NSOrthography?,
                      wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
-        if ((checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) == 0) {
+        if (checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) == 0 {
             return nil
         }
-        if (doc_checker == nil) {
+        if doc_checker == nil {
             return nil
         }
         var utf8Rep = stringToCheck.utf8CString
@@ -66,11 +73,11 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             aspell_document_checker_process(doc_checker, ptr.baseAddress!, -1)
         }
         var error_loc = aspell_document_checker_next_misspelling(doc_checker)
-        if (error_loc.len == 0) {
+        if error_loc.len == 0 {
             wordCount.pointee = countWords(string: stringToCheck)
             return nil
         }
-        if (error_loc.offset == 0) {
+        if error_loc.offset == 0 {
             wordCount.pointee = 0
         } else {
             utf8Rep.withUnsafeMutableBufferPointer { ptr in
@@ -82,15 +89,15 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         var spellRes = [NSTextCheckingResult]()
         repeat {
             utf8Rep.withUnsafeMutableBufferPointer { ptr in
-                let cStrBeforeMissData = Data(bytesNoCopy: ptr.baseAddress!, count: Int(error_loc.offset), deallocator: Data.Deallocator.none)
+                let cStrBeforeMissData = Data(bytes: ptr.baseAddress!, count: Int(error_loc.offset))
                 guard let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8) else {
                     NSLog("could not convert string portion before misstake, offset \(error_loc.offset)")
                     return
                 }
                 let beforeMissLen = (beforeMiss as NSString).length
-                let cStrMissData = Data(bytesNoCopy: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len), deallocator: Data.Deallocator.none)
+                let cStrMissData = Data(bytes: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len))
                 guard let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8) else {
-                    NSLog("could not convert missspell, offset \(error_loc.offset), len \(error_loc.len)")
+                    NSLog("could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(utf8Rep)")
                     return
                 }
                 let missLen = (missWord as NSString).length
@@ -107,14 +114,11 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         let suggestions = aspell_speller_suggest(spell_checker, word, -1)
         let elements = aspell_word_list_elements(suggestions)
         var nextWordPtr = aspell_string_enumeration_next(elements)
-        if (nextWordPtr == nil) {
-            return nil
-        }
         var suggestedWords = [String]()
-        repeat {
+        while nextWordPtr != nil {
             suggestedWords.append(String(cString: nextWordPtr!))
             nextWordPtr = aspell_string_enumeration_next(elements)
-        } while (nextWordPtr != nil)
+        }
         delete_aspell_string_list(elements)
         return suggestedWords
     }
@@ -136,16 +140,15 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         let wordsArray = stringToCheck.components(separatedBy: wordBdry)
         for (_, wordToCheck) in wordsArray.enumerated() {
             // ignore tex macros
-            if (wordToCheck.hasPrefix("\\")) {
+            if wordToCheck.hasPrefix("\\") {
                 continue
             }
             // ignore unless alphabets
-            let nonalpharan = wordToCheck.rangeOfCharacter(from: nonalphas)
-            if (nonalpharan != nil) {
+            if wordToCheck.rangeOfCharacter(from: nonalphas) != nil {
                 continue
             }
             // return range of first unknown word
-            if (0 == aspell_speller_check(spell_checker, wordToCheck, -1)) {
+            if 0 == aspell_speller_check(spell_checker, wordToCheck, -1) {
                 let strToCheckAsNSStr = stringToCheck as NSString
                 let matchRan = strToCheckAsNSStr.range(of: wordToCheck)
                 return matchRan
@@ -197,9 +200,20 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
 }
 
 func countWords(string: String?) -> Int {
-    if (string == nil || string! == "") {
+    if string == nil || string! == "" {
         return 0
     }
     let wordsArray = string!.components(separatedBy: CharacterSet.whitespacesAndNewlines)
     return wordsArray.filter({str in (str != "")}).count
+}
+
+func hexDump(data: Data) -> String {
+    let len = data.count
+    var s = NSMutableString(capacity: len*2)
+    var byteArray = [UInt8](repeating: 0x0, count: len)
+    data.copyBytes(to: &byteArray, count:len)
+    for v in byteArray {
+        s.appendFormat("%02x", v)
+    }
+    return s as String
 }
