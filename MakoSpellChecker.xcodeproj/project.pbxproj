@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		083788041DCEA37F003DC6A4 /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
+		089877651DF6EA1900C371FD /* libaspell.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; };
 		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
 		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
 		08BB90A81DC611770045E375 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A61DC611770045E375 /* main.swift */; };
@@ -32,7 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08AF3C871DD5E0ED004E5BFF /* aspell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = aspell.h; path = ../../../../../usr/local/include/aspell.h; sourceTree = SOURCE_ROOT; };
+		089877631DF6E95100C371FD /* aspell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aspell.h; path = "external-libs/aspell-0.60.6.1/interfaces/cc/aspell.h"; sourceTree = SOURCE_ROOT; };
+		089877641DF6EA1900C371FD /* libaspell.15.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libaspell.15.dylib; path = "external-libs/aspell-0.60.6.1/.libs/libaspell.15.dylib"; sourceTree = SOURCE_ROOT; };
 		08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MakoSpellChecker-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		08BB90781DC611380045E375 /* MakoSpellChecker.service */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakoSpellChecker.service; sourceTree = BUILT_PRODUCTS_DIR; };
 		08BB90841DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				089877651DF6EA1900C371FD /* libaspell.15.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,10 +97,11 @@
 		08BB907A1DC611380045E375 /* MakoSpellChecker */ = {
 			isa = PBXGroup;
 			children = (
+				089877641DF6EA1900C371FD /* libaspell.15.dylib */,
+				089877631DF6E95100C371FD /* aspell.h */,
 				08BB90A61DC611770045E375 /* main.swift */,
 				08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */,
 				08BB90841DC611380045E375 /* Info.plist */,
-				08AF3C871DD5E0ED004E5BFF /* aspell.h */,
 				08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */,
 			);
 			path = MakoSpellChecker;
@@ -331,7 +335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/.libs";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -377,7 +381,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/.libs";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-laspell";
@@ -393,10 +397,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/interfaces/cc/";
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/.libs";
 				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -413,10 +417,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/interfaces/cc/";
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib/;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.6.1/.libs";
 				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
