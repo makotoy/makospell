@@ -25,6 +25,32 @@ Then `cd` to `aspell-0.60.6.1` directory and do
 
 which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory.
 
+You then need to download dictionary files.
+
+Then create config file for Aspell at `~/.aspell.conf`.
+Here is the sample:
+
+    lang en_US
+    dict-dir /Library/Application Support/cocoAspell/aspell6-en-6.0-0
+    data-dir /Users/foo/lib/aspell-0.60
+    home-dir /Users/foo/Library/Preferences/cocoAspell/
+    personal en.pws
+    add-filter tex
+    add-tex-command rightarrow o
+    tex-check-comments true
+    encoding utf-8
+
+#### Tips for compling Aspell command
+
+You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email`.
+Modes seem to be broken in Aspell 0.60.
+Use the following commands to install `aspell` command under your home directory.
+These also install library and header files.
+
+    $ ./configure --prefix=${HOME} --enable-compile-in-filters
+    $ make
+    $ make install
+
 ### Referencing existing Aspell library
 
 Alternatively, you might already have Aspell (say, from Cocoaspell utility).
