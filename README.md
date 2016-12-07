@@ -27,8 +27,8 @@ which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.lib
 
 You then need to download dictionary files.
 
-Then create config file for Aspell at `~/.aspell.conf`.
-Here is the sample:
+Then create config file `~/.aspell.conf` for Aspell.
+Here is an sample:
 
     lang en_US
     dict-dir /Library/Application Support/cocoAspell/aspell6-en-6.0-0
@@ -40,10 +40,15 @@ Here is the sample:
     tex-check-comments true
     encoding utf-8
 
+* `dict-dir` is the directory containing `.cwl`, `.rws`, `.multi`, `.alias` files.
+* `data-dir` is the directory containing `.cset` and `.cmap` files.
+  This is `external-libs/aspell-0.60.6.1/data` in the project directory, but `make install` (see next section) will install it under `${PREFIX}/lib`.
+* `home-dir` is the directory containing `en-pws` file.
+
 #### Tips for compling Aspell command
 
-You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email`.
-Modes seem to be broken in Aspell 0.60.
+You do not have to install Aspell command for this project itself, but you might want it separately.
+You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email` (modes seem to be broken in Aspell 0.60).
 Use the following commands to install `aspell` command under your home directory.
 These also install library and header files.
 
