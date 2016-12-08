@@ -1,6 +1,6 @@
 # makospell
 
-An aspell bridge for Mac OS X
+Aspell bridge for Mac OS X
 
 This project aims to provide a way to use GNU Aspell spellchecker from applications in Mac OS X.
 
@@ -14,24 +14,35 @@ The project requires aspell library (`libaspell.dylib`). There are two ways:
 ### Compiling Aspell library from source
 
 By default, the Xcode project contains a reference to `external-libs/aspell-0.60.6.1/.libs/libpspell.dylib`.
-In order to build this file, you first need to download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
-Then place the directory `aspell-0.60.6.1` inside `external-libs`.
-This directory has `.gitignore` so that the aspell directory is not synced by git.
-In order to sucessfuly configure aspell for building, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
-Then `cd` to `aspell-0.60.6.1` directory and do
+Follow these steps to build this file:
 
-    $ ./configure
-    $ make
+1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
+2. Place the directory `aspell-0.60.6.1` inside `external-libs`.
+   This directory has `.gitignore` so that the aspell directory is not synced by git.
+3. In order to sucessfuly build Aspell, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
+4. `cd` to `aspell-0.60.6.1` directory and do
+
+        $ ./configure
+        $ make
 
 which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory.
 
-You then need to download dictionary files.
+You then need to prepare word lists.
+
+1. Download dictionary files from [Aspell directory](ftp://ftp.gnu.org/gnu/aspell/dict/0index.html).
+2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
+3. `cd` to `aspell6-en-2016.11.20-0` and do
+
+        $ ./configure
+        $ make
+
+You might get encoding error, but the word list should be created anyhow.
 
 Then create config file `~/.aspell.conf` for Aspell.
 Here is an sample:
 
     lang en_US
-    dict-dir /Library/Application Support/cocoAspell/aspell6-en-6.0-0
+    dict-dir path-to-aspell6-en-2016.11.20-0
     data-dir /Users/foo/lib/aspell-0.60
     home-dir /Users/foo/Library/Preferences/cocoAspell/
     personal en.pws
@@ -43,7 +54,7 @@ Here is an sample:
 * `dict-dir` is the directory containing `.cwl`, `.rws`, `.multi`, `.alias` files.
 * `data-dir` is the directory containing `.cset` and `.cmap` files.
   This is `external-libs/aspell-0.60.6.1/data` in the project directory, but `make install` (see next section) will install it under `${PREFIX}/lib`.
-* `home-dir` is the directory containing `en-pws` file.
+* `home-dir` is the directory containing the personal word list file `en.pws`.
 
 #### Tips for compling Aspell command
 
