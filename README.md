@@ -29,7 +29,7 @@ which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.lib
 
 You then need to prepare word lists.
 
-1. Download dictionary files from [Aspell directory](ftp://ftp.gnu.org/gnu/aspell/dict/0index.html).
+1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
 2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
 3. `cd` to `aspell6-en-2016.11.20-0` and do
 
@@ -42,7 +42,7 @@ Then create config file `~/.aspell.conf` for Aspell.
 Here is an sample:
 
     lang en_US
-    dict-dir path-to-aspell6-en-2016.11.20-0
+    dict-dir path/to/aspell6-en-2016.11.20-0
     data-dir /Users/foo/lib/aspell-0.60
     home-dir /Users/foo/Library/Preferences/cocoAspell/
     personal en.pws
