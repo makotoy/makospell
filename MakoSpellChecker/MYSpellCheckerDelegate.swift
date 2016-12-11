@@ -15,7 +15,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     
     override init() {
         let spell_config = new_aspell_config()
-        var aspell_conf_path = NSHomeDirectory() + "/.aspell.conf"
+        var aspell_conf_path = (NSHomeDirectory() as NSString).appendingPathComponent(".aspell.conf")
         let env_var_dic = ProcessInfo().environment
         if env_var_dic["MYSpellCheckerAspellConf"] != nil {
             aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
@@ -41,11 +41,11 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         } else {
             spell_checker = to_aspell_speller(possible_err)
 
-            let sysListPath = NSHomeDirectory() + "/Library/Spelling/English"
+            let sysListPath = (NSHomeDirectory() as NSString).appendingPathComponent("Library/Spelling/English")
             let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
             let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
             if aspellListDirPath.characters.count > 0 && aspellFileName.characters.count > 0 {
-                let aspellListPath = aspellListDirPath + "/" + aspellFileName
+                let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
                 if fileMan.isWritableFile(atPath: aspellListPath) {
                     syncyPersonalWordList(sysListPath: sysListPath, aspellListPath: aspellListPath)
                 }
