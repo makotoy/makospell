@@ -155,4 +155,7 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(suggs![0] == "take")
     }
 
+    func testListSync() {
+        XCTAssert(syncyPersonalWordList(sysListPath: "/Users/makotoy/Desktop/work/test1.txt", aspellListPath: "/Users/makotoy/Desktop/work/test2.txt") == true)
+    }
 }

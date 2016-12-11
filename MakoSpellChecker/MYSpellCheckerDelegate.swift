@@ -22,7 +22,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         }
         let fileMan = FileManager()
         if fileMan.fileExists(atPath: aspell_conf_path) {
-            aspell_config_replace(spell_config, "conf", aspell_conf_path)
+            propagateAspellConf(confPath: aspell_conf_path, confPtr: spell_config!)
         } else {
             NSLog("Could not find Aspell config file \(aspell_conf_path)")
         }
@@ -40,6 +40,17 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             NSLog(error_msg)
         } else {
             spell_checker = to_aspell_speller(possible_err)
+
+            let sysListPath = NSHomeDirectory() + "/Library/Spelling/English"
+            let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
+            let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
+            if aspellListDirPath.characters.count > 0 && aspellFileName.characters.count > 0 {
+                let aspellListPath = aspellListDirPath + "/" + aspellFileName
+                if fileMan.isWritableFile(atPath: aspellListPath) {
+                    syncyPersonalWordList(sysListPath: sysListPath, aspellListPath: aspellListPath)
+                }
+            }
+
             let possible_err_doc = new_aspell_document_checker(spell_checker)
             if (aspell_error_number(possible_err_doc) != 0) {
                 let error_msg_doc = String(cString:aspell_error_message(possible_err_doc))
@@ -216,4 +227,73 @@ func hexDump(data: Data) -> String {
         s.appendFormat("%02x", v)
     }
     return s as String
+}
+
+func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
+    guard let confStr = try? String(contentsOfFile: confPath, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read from aspell conf file \(confPath)")
+        return
+    }
+    let confList = confStr.components(separatedBy: CharacterSet.newlines)
+    for (_, line) in confList.enumerated() {
+        guard let firstSpace = line.rangeOfCharacter(from: CharacterSet.whitespaces) else {
+            continue
+        }
+        let keyStr = line.substring(to: firstSpace.lowerBound)
+        let valStr = line.substring(from: firstSpace.upperBound)
+        if (keyStr == "" || valStr == "") {
+            continue
+        }
+        aspell_config_replace(confPtr, keyStr, valStr)
+    }
+}
+
+func syncyPersonalWordList(sysListPath: String, aspellListPath: String) -> Bool {
+    let fileMan = FileManager()
+    
+    if fileMan.fileExists(atPath: sysListPath) == false {
+        NSLog("Asked to read from system word list path at \(sysListPath), but it does not exist")
+        return false
+    }
+    guard let sysListStr = try? String(contentsOfFile: sysListPath, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read the contents of \(sysListPath)")
+        return false
+    }
+    let sysList = sysListStr.components(separatedBy: CharacterSet.newlines)
+    
+    if fileMan.fileExists(atPath: aspellListPath) == false {
+        NSLog("Asked to read from Aspell word list path at \(aspellListPath), but it does not exist")
+        return false
+    }
+    guard var aspellListStr = try? String(contentsOfFile: aspellListPath, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read the contents of \(aspellListPath)")
+        return false
+    }
+    let aspellList = aspellListStr.components(separatedBy: CharacterSet.newlines)
+
+    var wordAdded = false
+    for (_, word) in sysList.enumerated() {
+        if aspellList.contains(word) == false {
+            aspellListStr +=  word + "\n"
+            wordAdded = true
+            NSLog("Adding word \(word)")
+        }
+    }
+    
+    if wordAdded {
+        var writePath = aspellListPath
+        if fileMan.isWritableFile(atPath: aspellListPath) == false {
+            writePath = NSTemporaryDirectory() + "test2.txt"
+            NSLog("New words added, but \(aspellListPath) is not writable, writing to \(writePath) instead")
+        }
+        do {
+            NSLog("Writing to \(writePath)")
+            try aspellListStr.write(toFile: writePath, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            NSLog("Faled to write new word list to \(writePath)")
+            return false
+        }
+    }
+
+    return wordAdded
 }
