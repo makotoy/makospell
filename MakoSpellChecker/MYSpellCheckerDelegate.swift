@@ -178,9 +178,8 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      inLanguage language: String) {
         NSLog("learning \(word)")
         let utf8Rep = word.utf8CString
-        utf8Rep.withUnsafeBufferPointer { ptr in
+        _ = utf8Rep.withUnsafeBufferPointer { ptr in
             aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
-//            aspell_speller_save_all_word_lists(spell_checker)
         }
     }
 //    func spellServer(_ sender: NSSpellServer,
@@ -200,7 +199,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             NSLog("accepted correction \(correction) for \(word)")
             let wordUtf8Rep = word.utf8CString
             let corrUtf8Rep = correction.utf8CString
-            wordUtf8Rep.withUnsafeBufferPointer { wrdPtr in
+            _ = wordUtf8Rep.withUnsafeBufferPointer { wrdPtr in
                 corrUtf8Rep.withUnsafeBufferPointer{ corrPtr in
                     aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, Int32(wordUtf8Rep.count), corrPtr.baseAddress!, Int32(corrUtf8Rep.count))
                 }
@@ -220,7 +219,7 @@ func countWords(string: String?) -> Int {
 
 func hexDump(data: Data) -> String {
     let len = data.count
-    var s = NSMutableString(capacity: len*2)
+    let s = NSMutableString(capacity: len*2)
     var byteArray = [UInt8](repeating: 0x0, count: len)
     data.copyBytes(to: &byteArray, count:len)
     for v in byteArray {
@@ -248,6 +247,7 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
     }
 }
 
+@discardableResult
 func syncyPersonalWordList(sysListPath: String, aspellListPath: String) -> Bool {
     let fileMan = FileManager()
     
