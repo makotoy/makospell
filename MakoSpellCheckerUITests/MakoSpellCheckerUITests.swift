@@ -156,6 +156,12 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
 
     func testListSync() {
-        XCTAssert(syncyPersonalWordList(sysListPath: "/Users/makotoy/Desktop/work/test1.txt", aspellListPath: "/Users/makotoy/Desktop/work/test2.txt") == true)
+        XCTAssert(checkerDelegate.syncPersonalWordList(sysListPath: "/Users/makotoy/Desktop/work/test1.txt", aspellListPath: "/Users/makotoy/Desktop/work/test2.txt") == true)
+    }
+    
+    func testHexDump() {
+        let testData = Data(bytes: [1, 0xa0])
+        let dumpStr = hexDump(data: testData)
+        XCTAssert(dumpStr == "01a0")
     }
 }
