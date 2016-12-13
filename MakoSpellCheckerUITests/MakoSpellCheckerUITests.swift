@@ -156,7 +156,11 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
 
     func testListSync() {
-        XCTAssert(checkerDelegate.syncPersonalWordList(sysListPath: "/Users/makotoy/Desktop/work/test1.txt", aspellListPath: "/Users/makotoy/Desktop/work/test2.txt") == true)
+        let testBundle = Bundle(for: MakoSpellCheckerUITests.self)
+        let test1Path = testBundle.path(forResource: "test1", ofType: "txt")
+        let test2Path = testBundle.path(forResource: "test2", ofType: "txt")
+        XCTAssert(test1Path != nil && test2Path != nil)
+        XCTAssert(syncPersonalWordList(spellChecker: checkerDelegate.spell_checker, sysListPath: test1Path!, aspellListPath: test2Path!) == true)
     }
     
     func testHexDump() {

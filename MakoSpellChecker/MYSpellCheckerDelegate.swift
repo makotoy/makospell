@@ -14,8 +14,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     var doc_checker: OpaquePointer? = nil
     
     override init() {
-        super.init()
-
+        // prepare aspell config
         let spell_config = new_aspell_config()
         var aspell_conf_path = (NSHomeDirectory() as NSString).appendingPathComponent(".aspell.conf")
         let env_var_dic = ProcessInfo().environment
@@ -28,6 +27,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         } else {
             NSLog("Could not find Aspell config file \(aspell_conf_path)")
         }
+        // want input encoding to be UTF-8
         let encoding_name = String(cString:aspell_config_retrieve(spell_config, "encoding"))
         if encoding_name != "utf-8" {
             if encoding_name == "none" {
@@ -36,12 +36,22 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                 NSLog("Aspell conf has encoding \(encoding_name), but Mac OS X spell system would give UTF-8 data (like non-breaking space 0xc2 0xa0)")
             }
         }
+        // instantiate spell checker
         let possible_err = new_aspell_speller(spell_config)
         if aspell_error_number(possible_err) != 0 {
             let error_msg = String(cString: aspell_error_message(possible_err))
             NSLog(error_msg)
         } else {
             spell_checker = to_aspell_speller(possible_err)
+            // sync word list
+            let sysListPath = (NSHomeDirectory() as NSString).appendingPathComponent("Library/Spelling/English")
+            let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
+            let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
+            if aspellListDirPath.characters.count > 0 && aspellFileName.characters.count > 0 {
+                let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
+                syncPersonalWordList(spellChecker: spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
+            }
+            // instantiate doc checker
             let possible_err_doc = new_aspell_document_checker(spell_checker)
             if (aspell_error_number(possible_err_doc) != 0) {
                 let error_msg_doc = String(cString:aspell_error_message(possible_err_doc))
@@ -50,19 +60,16 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                 doc_checker = to_aspell_document_checker(possible_err_doc)
             }
         }
-        
-        let sysListPath = (NSHomeDirectory() as NSString).appendingPathComponent("Library/Spelling/English")
-        let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
-        let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
-        if aspellListDirPath.characters.count > 0 && aspellFileName.characters.count > 0 {
-            let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
-            syncPersonalWordList(sysListPath: sysListPath, aspellListPath: aspellListPath)
-        }
+        // clear aspell config
         delete_aspell_config(spell_config)
+        // hand the task to superclass
+        super.init()
     }
     
-//    deinit {
-//    }
+    deinit {
+        delete_aspell_document_checker(doc_checker)
+        delete_aspell_speller(spell_checker)
+    }
     
     func spellServer(_ sender: NSSpellServer,
                      check stringToCheck: String,
@@ -71,10 +78,11 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      options: [String : Any]? = nil,
                      orthography: NSOrthography?,
                      wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
-        if (checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) == 0 {
+        guard doc_checker != nil else {
             return nil
         }
-        if doc_checker == nil {
+        guard (checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) != 0 else {
+            NSLog("Was asked to perform something other than spell check; NSTextCheckingTypes \(checkingTypes)")
             return nil
         }
         var utf8Rep = stringToCheck.utf8CString
@@ -100,13 +108,13 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             utf8Rep.withUnsafeMutableBufferPointer { ptr in
                 let cStrBeforeMissData = Data(bytes: ptr.baseAddress!, count: Int(error_loc.offset))
                 guard let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8) else {
-                    NSLog("could not convert string portion before misstake, offset \(error_loc.offset)")
+                    NSLog("Could not convert string portion before misstake, offset \(error_loc.offset)")
                     return
                 }
                 let beforeMissLen = (beforeMiss as NSString).length
                 let cStrMissData = Data(bytes: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len))
                 guard let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8) else {
-                    NSLog("could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(utf8Rep)")
+                    NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(charArray: utf8Rep))")
                     return
                 }
                 let missLen = (missWord as NSString).length
@@ -205,48 +213,6 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         default: break
         }
     }
-    @discardableResult
-    func syncPersonalWordList(sysListPath: String, aspellListPath: String) -> Bool {
-        let fileMan = FileManager()
-        
-        if fileMan.fileExists(atPath: sysListPath) == false {
-            NSLog("Asked to read from system word list path at \(sysListPath), but it does not exist")
-            return false
-        }
-        guard let sysListStr = try? String(contentsOfFile: sysListPath, encoding: String.Encoding.utf8) else {
-            NSLog("Could not read the contents of \(sysListPath)")
-            return false
-        }
-        let sysList = sysListStr.components(separatedBy: CharacterSet.newlines)
-        
-        if fileMan.fileExists(atPath: aspellListPath) == false {
-            NSLog("Asked to read from Aspell word list path at \(aspellListPath), but it does not exist")
-            return false
-        }
-        guard let aspellListStr = try? String(contentsOfFile: aspellListPath, encoding: String.Encoding.utf8) else {
-            NSLog("Could not read the contents of \(aspellListPath)")
-            return false
-        }
-        let aspellList = aspellListStr.components(separatedBy: CharacterSet.newlines)
-        
-        var wordAdded = false
-        for (_, word) in sysList.enumerated() {
-            if aspellList.contains(word) == false {
-                let utf8Rep = word.utf8CString
-                _ = utf8Rep.withUnsafeBufferPointer { ptr in
-                    aspell_speller_add_to_personal(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
-                }
-                wordAdded = true
-                NSLog("Adding word \(word) to personal list")
-            }
-        }
-        
-        if wordAdded {
-            aspell_speller_save_all_word_lists(spell_checker)
-        }
-        
-        return wordAdded
-    }
 }
 
 func countWords(string: String?) -> Int {
@@ -259,6 +225,13 @@ func countWords(string: String?) -> Int {
 
 func hexDump(data: Data) -> String {
     let resStrList = data.flatMap { byte in
+        return String(format: "%02x", byte)
+    }
+    return resStrList.reduce("", {$0 + $1})
+}
+
+func hexDump(charArray: ContiguousArray<CChar>) -> String {
+    let resStrList = charArray.flatMap { byte in
         return String(format: "%02x", byte)
     }
     return resStrList.reduce("", {$0 + $1})
@@ -282,3 +255,46 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
         aspell_config_replace(confPtr, keyStr, valStr)
     }
 }
+
+@discardableResult
+func syncPersonalWordList(spellChecker: OpaquePointer?, sysListPath: String, aspellListPath: String) -> Bool {
+    let fileMan = FileManager()
+    
+    if fileMan.fileExists(atPath: sysListPath) == false {
+        NSLog("Asked to read from system word list path at \(sysListPath), but it does not exist")
+        return false
+    }
+    guard let sysListStr = try? String(contentsOfFile: sysListPath, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read the contents of \(sysListPath)")
+        return false
+    }
+    let sysList = sysListStr.components(separatedBy: CharacterSet.newlines)
+    
+    if fileMan.fileExists(atPath: aspellListPath) == false {
+        NSLog("Asked to read from Aspell word list path at \(aspellListPath), but it does not exist")
+        return false
+    }
+    guard let aspellListStr = try? String(contentsOfFile: aspellListPath, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read the contents of \(aspellListPath)")
+        return false
+    }
+    let aspellList = aspellListStr.components(separatedBy: CharacterSet.newlines)
+    
+    var wordAdded = false
+    for (_, word) in sysList.enumerated() {
+        if aspellList.contains(word) == false {
+            let utf8Rep = word.utf8CString
+            _ = utf8Rep.withUnsafeBufferPointer { ptr in
+                aspell_speller_add_to_personal(spellChecker, ptr.baseAddress!, Int32(utf8Rep.count))
+            }
+            wordAdded = true
+            NSLog("Adding word \(word) to personal list")
+        }
+    }
+    if wordAdded {
+        aspell_speller_save_all_word_lists(spellChecker)
+    }
+    
+    return wordAdded
+}
+
