@@ -80,6 +80,7 @@ class MakoSpellCheckerUITests: XCTestCase {
         let res = checkerDelegate.spellServer(spellServer, check: "こんにちは invvalid", offset: 0, types: NSTextCheckingResult.CheckingType.spelling.rawValue, orthography: nil, wordCount: &dummyCounter)
         XCTAssert((res != nil) && (res!.count == 1))
         XCTAssert(dummyCounter == 1)
+        XCTAssert(res![0].range.location == ("こんにちは " as NSString).length)
     }
     
     func testIgnoreTexGroupCheck() {
@@ -164,8 +165,14 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
     
     func testHexDump() {
-        let testData = Data(bytes: [1, 0xa0])
+        let testStr = "abc"
+        guard let testData = testStr.data(using: String.Encoding.utf8) else {
+            XCTFail()
+            return
+        }
         let dumpStr = hexDump(data: testData)
-        XCTAssert(dumpStr == "01a0")
+        XCTAssert(dumpStr == "61 62 63")
+        let dumpStr2 = hexDump(utf8View: testStr.utf8)
+        XCTAssert(dumpStr2 == "61 62 63")
     }
 }

@@ -85,7 +85,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             NSLog("Was asked to perform something other than spell check; NSTextCheckingTypes \(checkingTypes)")
             return nil
         }
-        var utf8Rep = stringToCheck.utf8CString
+        let utf8Rep = stringToCheck.utf8CString
         utf8Rep.withUnsafeBufferPointer { ptr in
             aspell_document_checker_process(doc_checker, ptr.baseAddress!, -1)
         }
@@ -97,30 +97,24 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         if error_loc.offset == 0 {
             wordCount.pointee = 0
         } else {
-            utf8Rep.withUnsafeMutableBufferPointer { ptr in
-                let cStrUntilOffsetData = Data(bytesNoCopy: ptr.baseAddress!, count: Int(error_loc.offset), deallocator: Data.Deallocator.none)
-                let toFirstMisspell = String(data: cStrUntilOffsetData, encoding: String.Encoding.utf8)
-                wordCount.pointee = countWords(string: toFirstMisspell)
-            }
+            let toFirstMisspell = String(stringToCheck.utf8.prefix(Int(error_loc.offset)))
+            wordCount.pointee = countWords(string: toFirstMisspell)
         }
         var spellRes = [NSTextCheckingResult]()
         repeat {
-            utf8Rep.withUnsafeMutableBufferPointer { ptr in
-                let cStrBeforeMissData = Data(bytes: ptr.baseAddress!, count: Int(error_loc.offset))
-                guard let beforeMiss = String(data: cStrBeforeMissData, encoding: String.Encoding.utf8) else {
-                    NSLog("Could not convert string portion before misstake, offset \(error_loc.offset)")
-                    return
-                }
-                let beforeMissLen = (beforeMiss as NSString).length
-                let cStrMissData = Data(bytes: ptr.baseAddress! + Int(error_loc.offset), count: Int(error_loc.len))
-                guard let missWord = String(data: cStrMissData, encoding: String.Encoding.utf8) else {
-                    NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(charArray: utf8Rep))")
-                    return
-                }
-                let missLen = (missWord as NSString).length
-                let thisRange = NSRange(location: offset + beforeMissLen, length: missLen)
-                spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
+            guard let beforeThisMiss = String(stringToCheck.utf8.prefix(Int(error_loc.offset))) else {
+                NSLog("Could not convert string portion before misstake, offset \(error_loc.offset) in utf8 \(hexDump(utf8View: stringToCheck.utf8))")
+                continue
             }
+            let beforeThisMissLen = (beforeThisMiss as NSString).length
+            let fromMissView: String.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
+            guard let thisMissWord = String(fromMissView.prefix(Int(error_loc.len))) else {
+                NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(utf8View: stringToCheck.utf8))")
+                    continue
+            }
+            let missLen = (thisMissWord as NSString).length
+            let thisRange = NSRange(location: offset + beforeThisMissLen, length: missLen)
+            spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
             error_loc = aspell_document_checker_next_misspelling(doc_checker)
         } while (error_loc.len != 0)
         return spellRes
@@ -128,6 +122,9 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      suggestGuessesForWord word: String,
                      inLanguage language: String) -> [String]? {
+        guard spell_checker != nil else {
+            return nil
+        }
         let suggestions = aspell_speller_suggest(spell_checker, word, -1)
         let elements = aspell_word_list_elements(suggestions)
         var nextWordPtr = aspell_string_enumeration_next(elements)
@@ -150,6 +147,13 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String,
                      wordCount: UnsafeMutablePointer<Int>,
                      countOnly: Bool) -> NSRange {
+        guard spell_checker != nil else {
+            return NSRange(location: NSNotFound, length: 0)
+        }
+        if countOnly == true {
+            wordCount.pointee = countWords(string: stringToCheck)
+            return NSRange(location: NSNotFound, length: 0)
+        }
         // split into words, ignore punctuations except backslash (tex)
         let nonalphas = CharacterSet(charactersIn: "A"..."z").inverted
         var wordBdry = CharacterSet.letters.inverted
@@ -174,11 +178,11 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         // all words known
         return NSRange(location: NSNotFound, length: 0)
     }
-    func spellServer(_ sender: NSSpellServer,
-                     didForgetWord word: String,
-                     inLanguage language: String) {
-        
-    }
+//    func spellServer(_ sender: NSSpellServer,
+//                     didForgetWord word: String,
+//                     inLanguage language: String) {
+//        
+//    }
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
@@ -201,7 +205,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         // only called if accepts, rejects, edits
         NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
         switch response {
-        case NSCorrectionResponse.accepted.rawValue, NSCorrectionResponse.edited.rawValue:
+        case NSCorrectionResponse.accepted.rawValue:
             NSLog("accepted correction \(correction) for \(word)")
             let wordUtf8Rep = word.utf8CString
             let corrUtf8Rep = correction.utf8CString
@@ -224,17 +228,23 @@ func countWords(string: String?) -> Int {
 }
 
 func hexDump(data: Data) -> String {
+    if data.count == 0 {
+        return ""
+    }
     let resStrList = data.flatMap { byte in
         return String(format: "%02x", byte)
     }
-    return resStrList.reduce("", {$0 + $1})
+    return resStrList.reduce(" ", {$0 + " " + $1}).substring(from: "  ".endIndex)
 }
 
-func hexDump(charArray: ContiguousArray<CChar>) -> String {
-    let resStrList = charArray.flatMap { byte in
+func hexDump(utf8View: String.UTF8View) -> String {
+    if utf8View.count == 0 {
+        return ""
+    }
+    let resStrList = utf8View.flatMap { byte in
         return String(format: "%02x", byte)
     }
-    return resStrList.reduce("", {$0 + $1})
+    return resStrList.reduce(" ", {$0 + " " + $1}).substring(from: "  ".endIndex)
 }
 
 func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
