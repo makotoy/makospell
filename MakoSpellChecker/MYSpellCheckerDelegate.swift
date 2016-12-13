@@ -189,7 +189,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         NSLog("learning \(word)")
         let utf8Rep = word.utf8CString
         _ = utf8Rep.withUnsafeBufferPointer { ptr in
-            aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, Int32(utf8Rep.count))
+            aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, -1)
         }
     }
 //    func spellServer(_ sender: NSSpellServer,
@@ -211,7 +211,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let corrUtf8Rep = correction.utf8CString
             _ = wordUtf8Rep.withUnsafeBufferPointer { wrdPtr in
                 corrUtf8Rep.withUnsafeBufferPointer{ corrPtr in
-                    aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, Int32(wordUtf8Rep.count), corrPtr.baseAddress!, Int32(corrUtf8Rep.count))
+                    aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, -1, corrPtr.baseAddress!, -1)
                 }
             }
         default: break
@@ -234,7 +234,7 @@ func hexDump(data: Data) -> String {
     let resStrList = data.flatMap { byte in
         return String(format: "%02x", byte)
     }
-    return resStrList.reduce(" ", {$0 + " " + $1}).substring(from: "  ".endIndex)
+    return resStrList.reduce("", {$0 + " " + $1}).substring(from: " ".endIndex)
 }
 
 func hexDump(utf8View: String.UTF8View) -> String {
@@ -244,7 +244,7 @@ func hexDump(utf8View: String.UTF8View) -> String {
     let resStrList = utf8View.flatMap { byte in
         return String(format: "%02x", byte)
     }
-    return resStrList.reduce(" ", {$0 + " " + $1}).substring(from: "  ".endIndex)
+    return resStrList.reduce("", {$0 + " " + $1}).substring(from: " ".endIndex)
 }
 
 func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
@@ -295,7 +295,7 @@ func syncPersonalWordList(spellChecker: OpaquePointer?, sysListPath: String, asp
         if aspellList.contains(word) == false {
             let utf8Rep = word.utf8CString
             _ = utf8Rep.withUnsafeBufferPointer { ptr in
-                aspell_speller_add_to_personal(spellChecker, ptr.baseAddress!, Int32(utf8Rep.count))
+                aspell_speller_add_to_personal(spellChecker, ptr.baseAddress!, -1)
             }
             wordAdded = true
             NSLog("Adding word \(word) to personal list")
