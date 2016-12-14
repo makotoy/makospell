@@ -161,18 +161,12 @@ class MakoSpellCheckerUITests: XCTestCase {
         let test1Path = testBundle.path(forResource: "test1", ofType: "txt")
         let test2Path = testBundle.path(forResource: "test2", ofType: "txt")
         XCTAssert(test1Path != nil && test2Path != nil)
-        XCTAssert(syncPersonalWordList(spellChecker: checkerDelegate.spell_checker, sysListPath: test1Path!, aspellListPath: test2Path!) == true)
+        XCTAssert(syncPersonalWordList(checkerDelegate.spell_checker, sysListPath: test1Path!, aspellListPath: test2Path!) == true)
     }
     
     func testHexDump() {
-        let testStr = "abc"
-        guard let testData = testStr.data(using: String.Encoding.utf8) else {
-            XCTFail()
-            return
-        }
-        let dumpStr = hexDump(data: testData)
+        let testStr: String = "abc"
+        let dumpStr = hexDump(testStr.utf8)
         XCTAssert(dumpStr == "61 62 63")
-        let dumpStr2 = hexDump(utf8View: testStr.utf8)
-        XCTAssert(dumpStr2 == "61 62 63")
     }
 }

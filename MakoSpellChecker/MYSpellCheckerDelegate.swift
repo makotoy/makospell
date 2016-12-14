@@ -47,9 +47,9 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let sysListPath = (NSHomeDirectory() as NSString).appendingPathComponent("Library/Spelling/English")
             let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
             let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
-            if aspellListDirPath.characters.count > 0 && aspellFileName.characters.count > 0 {
-                let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
-                syncPersonalWordList(spellChecker: spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
+            let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
+            if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDirPath) {
+                syncPersonalWordList(spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
             }
             // instantiate doc checker
             let possible_err_doc = new_aspell_document_checker(spell_checker)
@@ -91,25 +91,21 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         }
         var error_loc = aspell_document_checker_next_misspelling(doc_checker)
         if error_loc.len == 0 {
-            wordCount.pointee = countWords(string: stringToCheck)
+            wordCount.pointee = countWords(stringToCheck)
             return nil
         }
-        if error_loc.offset == 0 {
-            wordCount.pointee = 0
-        } else {
-            let toFirstMisspell = String(stringToCheck.utf8.prefix(Int(error_loc.offset)))
-            wordCount.pointee = countWords(string: toFirstMisspell)
-        }
+        let toFirstMisspell = String(stringToCheck.utf8.prefix(Int(error_loc.offset)))
+        wordCount.pointee = countWords(toFirstMisspell)
         var spellRes = [NSTextCheckingResult]()
         repeat {
             guard let beforeThisMiss = String(stringToCheck.utf8.prefix(Int(error_loc.offset))) else {
-                NSLog("Could not convert string portion before misstake, offset \(error_loc.offset) in utf8 \(hexDump(utf8View: stringToCheck.utf8))")
+                NSLog("Could not convert string portion before misstake, offset \(error_loc.offset) in utf8 \(hexDump(stringToCheck.utf8))")
                 continue
             }
             let beforeThisMissLen = (beforeThisMiss as NSString).length
             let fromMissView: String.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
             guard let thisMissWord = String(fromMissView.prefix(Int(error_loc.len))) else {
-                NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(utf8View: stringToCheck.utf8))")
+                NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(stringToCheck.utf8))")
                     continue
             }
             let missLen = (thisMissWord as NSString).length
@@ -151,7 +147,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             return NSRange(location: NSNotFound, length: 0)
         }
         if countOnly == true {
-            wordCount.pointee = countWords(string: stringToCheck)
+            wordCount.pointee = countWords(stringToCheck)
             return NSRange(location: NSNotFound, length: 0)
         }
         // split into words, ignore punctuations except backslash (tex)
@@ -219,7 +215,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     }
 }
 
-func countWords(string: String?) -> Int {
+func countWords(_ string: String?) -> Int {
     if string == nil || string! == "" {
         return 0
     }
@@ -227,24 +223,19 @@ func countWords(string: String?) -> Int {
     return wordsArray.filter({str in (str != "")}).count
 }
 
-func hexDump(data: Data) -> String {
-    if data.count == 0 {
-        return ""
+func hexDump<T: Sequence>(_ ui8seq: T) -> String where T.Iterator.Element == UInt8 {
+    let resStrList = ui8seq.map { byte in
+        String(format: "%02x", byte)
     }
-    let resStrList = data.flatMap { byte in
-        return String(format: "%02x", byte)
-    }
-    return resStrList.reduce("", {$0 + " " + $1}).substring(from: " ".endIndex)
+    return resStrList.joined(separator: " ")
 }
 
-func hexDump(utf8View: String.UTF8View) -> String {
-    if utf8View.count == 0 {
-        return ""
+// cannot resolve above in unit test
+func hexDump(_ ui8seq: String.UTF8View) -> String {
+    let resStrList = ui8seq.map { byte in
+        String(format: "%02x", byte)
     }
-    let resStrList = utf8View.flatMap { byte in
-        return String(format: "%02x", byte)
-    }
-    return resStrList.reduce("", {$0 + " " + $1}).substring(from: " ".endIndex)
+    return resStrList.joined(separator: " ")
 }
 
 func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
@@ -267,7 +258,7 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
 }
 
 @discardableResult
-func syncPersonalWordList(spellChecker: OpaquePointer?, sysListPath: String, aspellListPath: String) -> Bool {
+func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, aspellListPath: String) -> Bool {
     let fileMan = FileManager()
     
     if fileMan.fileExists(atPath: sysListPath) == false {
