@@ -12,6 +12,7 @@ import AppKit
 class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     var spell_checker: OpaquePointer? = nil
     var doc_checker: OpaquePointer? = nil
+    var langName: String = "Unset"
     
     override init() {
         // prepare aspell config
@@ -36,6 +37,9 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                 NSLog("Aspell conf has encoding \(encoding_name), but Mac OS X spell system would give UTF-8 data (like non-breaking space 0xc2 0xa0)")
             }
         }
+        // language name
+        let lang_code = String(cString:aspell_config_retrieve(spell_config, "lang"))
+        langName = LanguageCodeHandler.convertLangCode(lang_code)
         // instantiate spell checker
         let possible_err = new_aspell_speller(spell_config)
         if aspell_error_number(possible_err) != 0 {
@@ -44,11 +48,12 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         } else {
             spell_checker = to_aspell_speller(possible_err)
             // sync word list
-            let sysListPath = (NSHomeDirectory() as NSString).appendingPathComponent("Library/Spelling/English")
-            let aspellListDirPath = String(cString: aspell_config_retrieve(spell_config, "home-dir"))
+            let sysListDir = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true).appendingPathComponent("Library/Spelling")
+            let sysListPath = sysListDir.appendingPathComponent(langName).path
+            let aspellListDir = URL(fileURLWithPath: String(cString: aspell_config_retrieve(spell_config, "home-dir")))
             let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
-            let aspellListPath = (aspellListDirPath as NSString).appendingPathComponent(aspellFileName)
-            if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDirPath) {
+            let aspellListPath = aspellListDir.appendingPathComponent(aspellFileName).path
+            if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDir.path) {
                 syncPersonalWordList(spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
             }
             // instantiate doc checker
@@ -146,7 +151,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         guard spell_checker != nil else {
             return NSRange(location: NSNotFound, length: 0)
         }
-        if countOnly == true {
+        if countOnly {
             wordCount.pointee = countWords(stringToCheck)
             return NSRange(location: NSNotFound, length: 0)
         }
@@ -261,7 +266,7 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
 func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, aspellListPath: String) -> Bool {
     let fileMan = FileManager()
     
-    if fileMan.fileExists(atPath: sysListPath) == false {
+    if !fileMan.fileExists(atPath: sysListPath) {
         NSLog("Asked to read from system word list path at \(sysListPath), but it does not exist")
         return false
     }
@@ -271,7 +276,7 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
     }
     let sysList = sysListStr.components(separatedBy: CharacterSet.newlines)
     
-    if fileMan.fileExists(atPath: aspellListPath) == false {
+    if !fileMan.fileExists(atPath: aspellListPath){
         NSLog("Asked to read from Aspell word list path at \(aspellListPath), but it does not exist")
         return false
     }
@@ -283,7 +288,7 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
     
     var wordAdded = false
     for (_, word) in sysList.enumerated() {
-        if aspellList.contains(word) == false {
+        if !aspellList.contains(word) {
             let utf8Rep = word.utf8CString
             _ = utf8Rep.withUnsafeBufferPointer { ptr in
                 aspell_speller_add_to_personal(spellChecker, ptr.baseAddress!, -1)
@@ -299,3 +304,14 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
     return wordAdded
 }
 
+struct LanguageCodeHandler {
+    static let codeDict = ["en": "English", "de": "German", "fr": "French"]
+    static func convertLangCode(_ code: String) -> String {
+        let normalizedCode = code.substring(to: code.index(after:code.index(after: code.startIndex)))
+        guard let fullName = codeDict[normalizedCode] else {
+            NSLog("Unknown ISO 639 code \(code) was queried.")
+            return "Unknown"
+        }
+        return fullName
+    }
+}

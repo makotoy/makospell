@@ -13,7 +13,7 @@ The project requires aspell library (`libaspell.dylib`). There are two ways:
 
 ### Compiling Aspell library from source
 
-By default, the Xcode project contains a reference to `external-libs/aspell-0.60.6.1/.libs/libpspell.dylib`.
+By default, the Xcode project contains a reference to `external-libs/aspell-0.60.6.1/.libs/libaspell.15.dylib`.
 Follow these steps to build this file:
 
 1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
@@ -31,12 +31,13 @@ You then need to prepare word lists.
 
 1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
 2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
+   This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
 3. `cd` to `aspell6-en-2016.11.20-0` and do
 
         $ ./configure
         $ make
 
-You might get encoding error, but the word list should be created anyhow.
+You might get encoding error (which can be fixed by setting Aspell encoding to `iso-8859-1`), but the word list should be created anyhow.
 
 Then create config file `~/.aspell.conf` for Aspell.
 Here is an sample:
@@ -55,6 +56,10 @@ Here is an sample:
 * `data-dir` is the directory containing `.cset` and `.cmap` files.
   This is `external-libs/aspell-0.60.6.1/data` in the project directory, but `make install` (see next section) will install it under `${PREFIX}/lib`.
 * `home-dir` is the directory containing the personal word list file `en.pws`.
+* `encoding` needs to be `utf-8`, as we need to assume that only Unicode can represent the possible input (such as non-breaking space) from Mac OS X.
+
+You can set `MYSpellCheckerAspellConf` environment variable to use different config file.
+See [this Stack Overflow thread](http://stackoverflow.com/questions/25385934/setting-environment-variables-via-launchd-conf-no-longer-works-in-os-x-yosemite/26586170#26586170) for how to set environment variables at login.
 
 #### Tips for compling Aspell command
 

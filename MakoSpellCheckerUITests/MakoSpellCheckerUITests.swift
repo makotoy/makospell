@@ -169,4 +169,9 @@ class MakoSpellCheckerUITests: XCTestCase {
         let dumpStr = hexDump(testStr.utf8)
         XCTAssert(dumpStr == "61 62 63")
     }
+    func testLangCode() {
+        XCTAssert(LanguageCodeHandler.convertLangCode("en") == "English")
+        XCTAssert(LanguageCodeHandler.convertLangCode("en_US") == "English")
+        XCTAssert(LanguageCodeHandler.convertLangCode("de") == "German")
+    }
 }
