@@ -55,6 +55,8 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let aspellListPath = aspellListDir.appendingPathComponent(aspellFileName).path
             if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDir.path) {
                 syncPersonalWordList(spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
+            } else {
+                NSLog("Configured to use word list at \(aspellListPath), but something is wrong either with this or the system list \(sysListPath)")
             }
             // instantiate doc checker
             let possible_err_doc = new_aspell_document_checker(spell_checker)
@@ -76,6 +78,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         delete_aspell_speller(spell_checker)
     }
     
+    // 'offset' needs to be added to the offsets of result ranges
     func spellServer(_ sender: NSSpellServer,
                      check stringToCheck: String,
                      offset: Int,
@@ -90,24 +93,29 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             NSLog("Was asked to perform something other than spell check; NSTextCheckingTypes \(checkingTypes)")
             return nil
         }
+        // start checking the input
         let utf8Rep = stringToCheck.utf8CString
         utf8Rep.withUnsafeBufferPointer { ptr in
             aspell_document_checker_process(doc_checker, ptr.baseAddress!, -1)
         }
+        // if there are no errors, just report the word count
         var error_loc = aspell_document_checker_next_misspelling(doc_checker)
         if error_loc.len == 0 {
             wordCount.pointee = countWords(stringToCheck)
             return nil
         }
+        // word count until the first error
         let toFirstMisspell = String(stringToCheck.utf8.prefix(Int(error_loc.offset)))
         wordCount.pointee = countWords(toFirstMisspell)
         var spellRes = [NSTextCheckingResult]()
         repeat {
+            // get offset (in NSString) of error
             guard let beforeThisMiss = String(stringToCheck.utf8.prefix(Int(error_loc.offset))) else {
                 NSLog("Could not convert string portion before misstake, offset \(error_loc.offset) in utf8 \(hexDump(stringToCheck.utf8))")
                 continue
             }
             let beforeThisMissLen = (beforeThisMiss as NSString).length
+            // get length (in NSString) of error
             let fromMissView: String.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
             guard let thisMissWord = String(fromMissView.prefix(Int(error_loc.len))) else {
                 NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(stringToCheck.utf8))")
@@ -115,6 +123,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             }
             let missLen = (thisMissWord as NSString).length
             let thisRange = NSRange(location: offset + beforeThisMissLen, length: missLen)
+            // add this range and continue to next error
             spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
             error_loc = aspell_document_checker_next_misspelling(doc_checker)
         } while (error_loc.len != 0)
@@ -184,6 +193,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
 //                     inLanguage language: String) {
 //        
 //    }
+    // called both for "learn" and "ignore" actions
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
@@ -198,12 +208,13 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
 //                     in string: String,
 //                     language: String) -> [String]? {
 //    }
+    // only called if accepts, rejects, edits
+    // but cannot observe reject (close spelling window) and edit (edit after accept) so far
     func spellServer(_ sender: NSSpellServer,
                      recordResponse response: Int,
                      toCorrection correction: String,
                      forWord word: String,
                      language: String) {
-        // only called if accepts, rejects, edits
         NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
         switch response {
         case NSCorrectionResponse.accepted.rawValue:
@@ -235,6 +246,13 @@ func hexDump<T: Sequence>(_ ui8seq: T) -> String where T.Iterator.Element == UIn
     return resStrList.joined(separator: " ")
 }
 
+func hexDump<T: Sequence>(_ si8seq: T) -> String where T.Iterator.Element == Int8 {
+    let resStrList = si8seq.map { byte in
+        String(format: "%02x", UInt8(byte))
+    }
+    return resStrList.joined(separator: " ")
+}
+
 // cannot resolve above in unit test
 func hexDump(_ ui8seq: String.UTF8View) -> String {
     let resStrList = ui8seq.map { byte in
@@ -262,10 +280,12 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
     }
 }
 
+// reads system word list (newline separated) and add words to aspell which are not in the user list
+// returns if words are actually added or not
 @discardableResult
 func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, aspellListPath: String) -> Bool {
     let fileMan = FileManager()
-    
+    // get system word list
     if !fileMan.fileExists(atPath: sysListPath) {
         NSLog("Asked to read from system word list path at \(sysListPath), but it does not exist")
         return false
@@ -275,7 +295,7 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
         return false
     }
     let sysList = sysListStr.components(separatedBy: CharacterSet.newlines)
-    
+    // get user word list
     if !fileMan.fileExists(atPath: aspellListPath){
         NSLog("Asked to read from Aspell word list path at \(aspellListPath), but it does not exist")
         return false
@@ -285,7 +305,7 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
         return false
     }
     let aspellList = aspellListStr.components(separatedBy: CharacterSet.newlines)
-    
+    // check if words in the system list are in the user list
     var wordAdded = false
     for (_, word) in sysList.enumerated() {
         if !aspellList.contains(word) {
@@ -297,10 +317,10 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
             NSLog("Adding word \(word) to personal list")
         }
     }
+    // save personal word list if there was change
     if wordAdded {
         aspell_speller_save_all_word_lists(spellChecker)
     }
-    
     return wordAdded
 }
 

@@ -165,7 +165,7 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
     
     func testHexDump() {
-        let testStr: String = "abc"
+        let testStr = "abc"
         let dumpStr = hexDump(testStr.utf8)
         XCTAssert(dumpStr == "61 62 63")
     }
