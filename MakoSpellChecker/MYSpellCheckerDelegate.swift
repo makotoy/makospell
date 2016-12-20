@@ -306,12 +306,14 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
 
 struct LanguageCodeHandler {
     static let codeDict = ["en": "English", "de": "German", "fr": "French"]
+    
     static func convertLangCode(_ code: String) -> String {
-        let normalizedCode = code.substring(to: code.index(after:code.index(after: code.startIndex)))
-        guard let fullName = codeDict[normalizedCode] else {
-            NSLog("Unknown ISO 639 code \(code) was queried.")
-            return "Unknown"
+        for (_, langCode) in codeDict.keys.enumerated() {
+            if code.hasPrefix(langCode) {
+                return codeDict[langCode]!
+            }
         }
-        return fullName
+        NSLog("Unknown ISO 639 code \(code) was queried.")
+        return "Unknown"
     }
 }
