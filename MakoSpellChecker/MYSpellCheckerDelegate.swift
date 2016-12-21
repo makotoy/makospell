@@ -334,6 +334,6 @@ struct LanguageCodeHandler {
             }
         }
         NSLog("Unknown ISO 639 code \(code) was queried.")
-        return "Unknown"
+        return "English"
     }
 }

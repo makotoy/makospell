@@ -36,6 +36,7 @@
 			<key>NSLanguages</key>
 			<array>
 				<string>English</string>
+				<string>French</string>
 			</array>
 			<key>NSMenuItem</key>
 			<dict/>
