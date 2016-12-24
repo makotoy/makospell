@@ -141,6 +141,7 @@
 				08BB90741DC611380045E375 /* Sources */,
 				08BB90751DC611380045E375 /* Frameworks */,
 				08BB90761DC611380045E375 /* Resources */,
+				08373EFA1E0E2E4200EEF162 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -259,6 +260,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		08373EFA1E0E2E4200EEF162 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08BB90741DC611380045E375 /* Sources */ = {

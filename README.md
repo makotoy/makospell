@@ -34,8 +34,9 @@ You then need to prepare word lists.
    This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
 3. `cd` to `aspell6-en-2016.11.20-0` and do
 
-        $ ./configure
+        $ ./configure --vars DESTDIR=path/to/dict/dir
         $ make
+        $ make install
 
 You might get encoding error (which can be fixed by setting Aspell encoding to `iso-8859-1`), but the word list should be created anyhow.
 
