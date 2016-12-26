@@ -19,34 +19,49 @@ Follow these steps to build this file:
 1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
 2. Place the directory `aspell-0.60.6.1` inside `external-libs`.
    This directory has `.gitignore` so that the aspell directory is not synced by git.
-3. In order to sucessfuly build Aspell, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
+3. In order to successfully build Aspell, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
 4. `cd` to `aspell-0.60.6.1` directory and do
 
-        $ ./configure
+        $ ./configure --see-below-for-options
         $ make
+        $ make install
 
-which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory.
+which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory, and install `aspell` under `$PREFIX/bin`.
+
+#### Tips for compling Aspell command
+
+You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email` (modes seem to be broken in Aspell 0.60).
+Use the following commands to install `aspell` command under your home directory.
+These also install library and header files.
+
+    $ ./configure --prefix=${HOME} --enable-compile-in-filters
+    $ make
+    $ make install
 
 You then need to prepare word lists.
 
 1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
 2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
    This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
-3. `cd` to `aspell6-en-2016.11.20-0` and do
+3. If you already have `.aspell.conf` file, temporarily rename it to something else.
+4. cd to `aspell6-en-2016.11.20-0` and do
 
-        $ ./configure --vars DESTDIR=path/to/dict/dir
+        $ ./configure --vars DESTDIR=/path/to/proj/external-libs/dict/ ASPELL_FLAGS="--per-conf=/path/to/proj/external-libs/aspell.en.dict-compile.conf --data-dir=/path/to/proj/external-libs/aspell-0.60.6.1/data --dict-dir=/path/to/proj/external-libs/dict/fr" ASPELL="/path/to/aspell --per-conf=/path/to/proj/external-libs/aspell.en.dict-compile.conf"
         $ make
         $ make install
 
-You might get encoding error (which can be fixed by setting Aspell encoding to `iso-8859-1`), but the word list should be created anyhow.
+This should install English dictionary files under `external-libs/dict/en`. Then repeat the same for French dictionary. However, the configure script is missing a line to process options, so copy the modified one from `external-libs` first.
 
-Then create config file `~/.aspell.conf` for Aspell.
+    $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
+    $ ./configure-fr DESTDIR=/path/to/proj/external-libs/dict/ ASPELL_FLAGS="--per-conf=/path/to/proj/external-libs/aspell.fr.dict-compile.conf --data-dir=/path/to/proj/external-libs/aspell-0.60.6.1/data --dict-dir=/path/to/proj/external-libs/dict/fr" ASPELL="/path/to/aspell --per-conf=/path/to/proj/external-libs/aspell.fr.dict-compile.conf"
+
+Then create config file `~/.aspell.conf` for Aspell if you don't have it yet.
 Here is an sample:
 
     lang en_US
     dict-dir path/to/aspell6-en-2016.11.20-0
-    data-dir /Users/foo/lib/aspell-0.60
-    home-dir /Users/foo/Library/Preferences/cocoAspell/
+    data-dir /path/to/aspell-0.60
+    home-dir /path/to/home-dir
     personal en.pws
     add-filter tex
     add-tex-command rightarrow o
@@ -62,16 +77,6 @@ Here is an sample:
 You can set `MYSpellCheckerAspellConf` environment variable to use different config file.
 See [this Stack Overflow thread](http://stackoverflow.com/questions/25385934/setting-environment-variables-via-launchd-conf-no-longer-works-in-os-x-yosemite/26586170#26586170) for how to set environment variables at login.
 
-#### Tips for compling Aspell command
-
-You do not have to install Aspell command for this project itself, but you might want it separately.
-You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email` (modes seem to be broken in Aspell 0.60).
-Use the following commands to install `aspell` command under your home directory.
-These also install library and header files.
-
-    $ ./configure --prefix=${HOME} --enable-compile-in-filters
-    $ make
-    $ make install
 
 ### Referencing existing Aspell library
 
