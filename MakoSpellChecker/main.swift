@@ -10,8 +10,13 @@ import Foundation
 
 let aServer = NSSpellServer()
 let myDelegate = MYSpellCheckerDelegate()
-if (aServer.registerLanguage(myDelegate.langName, byVendor: "MakoSpellChecker")) {
-    NSLog("MakoSpell Checker running with \(myDelegate.langName).")
+var didFail = false
+for langCode in myDelegate.langCodes {
+    let successRegisteringLang = aServer.registerLanguage(LanguageCodeHandler.convertLangCode(langCode), byVendor: "MakoSpellChecker")
+    didFail = didFail || !successRegisteringLang
+}
+if (!didFail) {
+    NSLog("MakoSpell Checker running with \(myDelegate.langCodes).")
     aServer.delegate = myDelegate
     aServer.run()
     

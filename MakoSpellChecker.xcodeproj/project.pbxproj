@@ -15,6 +15,10 @@
 		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
 		08BB90A81DC611770045E375 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A61DC611770045E375 /* main.swift */; };
 		08BB90A91DC611770045E375 /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
+		08C33F781E14F0D5002E0A51 /* aspell.en.conf in Resources */ = {isa = PBXBuildFile; fileRef = 08C33F771E14F0D5002E0A51 /* aspell.en.conf */; };
+		08D53AA41E17218B0079A16E /* aspell.fr.conf in Resources */ = {isa = PBXBuildFile; fileRef = 08D53AA31E17218B0079A16E /* aspell.fr.conf */; };
+		08D53AA51E1721B50079A16E /* aspell.en.conf in Resources */ = {isa = PBXBuildFile; fileRef = 08C33F771E14F0D5002E0A51 /* aspell.en.conf */; };
+		08D53AA61E1721B50079A16E /* aspell.fr.conf in Resources */ = {isa = PBXBuildFile; fileRef = 08D53AA31E17218B0079A16E /* aspell.fr.conf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +54,8 @@
 		08BB909A1DC611380045E375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08BB90A61DC611770045E375 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MYSpellCheckerDelegate.swift; sourceTree = "<group>"; };
+		08C33F771E14F0D5002E0A51 /* aspell.en.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = aspell.en.conf; path = "external-libs/aspell.en.conf"; sourceTree = SOURCE_ROOT; };
+		08D53AA31E17218B0079A16E /* aspell.fr.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = aspell.fr.conf; path = "external-libs/aspell.fr.conf"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,8 @@
 				08BB90A61DC611770045E375 /* main.swift */,
 				08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */,
 				08BB90841DC611380045E375 /* Info.plist */,
+				08D53AA31E17218B0079A16E /* aspell.fr.conf */,
+				08C33F771E14F0D5002E0A51 /* aspell.en.conf */,
 				08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */,
 			);
 			path = MakoSpellChecker;
@@ -177,6 +185,7 @@
 				08BB90901DC611380045E375 /* Sources */,
 				08BB90911DC611380045E375 /* Frameworks */,
 				08BB90921DC611380045E375 /* Resources */,
+				08D53AA71E1721CC0079A16E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -240,6 +249,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08C33F781E14F0D5002E0A51 /* aspell.en.conf in Resources */,
+				08D53AA41E17218B0079A16E /* aspell.fr.conf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +265,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08D53AA51E1721B50079A16E /* aspell.en.conf in Resources */,
+				08D53AA61E1721B50079A16E /* aspell.fr.conf in Resources */,
 				082095751E002DC4007D8957 /* test1.txt in Resources */,
 				082095761E002DC4007D8957 /* test2.txt in Resources */,
 			);
@@ -273,7 +286,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\n";
+			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.6.1/data ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/data/\n";
+		};
+		08D53AA71E1721CC0079A16E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.6.1/data ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/data/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

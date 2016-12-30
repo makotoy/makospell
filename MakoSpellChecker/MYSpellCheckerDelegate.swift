@@ -10,72 +10,62 @@ import Foundation
 import AppKit
 
 class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
-    var spell_checker: OpaquePointer? = nil
-    var doc_checker: OpaquePointer? = nil
-    var langName: String = "Unset"
+    var aspell_spell_checkers: [String: OpaquePointer] = [:]
+    var aspell_doc_checkers: [String: OpaquePointer] = [:]
+    let langCodes = ["en", "fr"]
     
     override init() {
-        // prepare aspell config
-        let spell_config = new_aspell_config()
-        var aspell_conf_path = (NSHomeDirectory() as NSString).appendingPathComponent(".aspell.conf")
-        let env_var_dic = ProcessInfo().environment
-        if env_var_dic["MYSpellCheckerAspellConf"] != nil {
-            aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
-        }
-        let fileMan = FileManager()
-        if fileMan.fileExists(atPath: aspell_conf_path) {
-            propagateAspellConf(confPath: aspell_conf_path, confPtr: spell_config!)
-        } else {
-            NSLog("Could not find Aspell config file \(aspell_conf_path)")
-        }
-        // want input encoding to be UTF-8
-        let encoding_name = String(cString:aspell_config_retrieve(spell_config, "encoding"))
-        if encoding_name != "utf-8" {
-            if encoding_name == "none" {
-                aspell_config_replace(spell_config, "encoding", "utf-8")
-            } else {
-                NSLog("Aspell conf has encoding \(encoding_name), but Mac OS X spell system would give UTF-8 data (like non-breaking space 0xc2 0xa0)")
+        for langCode in langCodes {
+            var aspell_conf_path = (NSHomeDirectory() as NSString).appendingPathComponent(".aspell.conf")
+            let env_var_dic = ProcessInfo().environment
+            if env_var_dic["MYSpellCheckerAspellConf"] != nil {
+                aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
             }
-        }
-        // language name
-        let lang_code = String(cString:aspell_config_retrieve(spell_config, "lang"))
-        langName = LanguageCodeHandler.convertLangCode(lang_code)
-        // instantiate spell checker
-        let possible_err = new_aspell_speller(spell_config)
-        if aspell_error_number(possible_err) != 0 {
-            let error_msg = String(cString: aspell_error_message(possible_err))
-            NSLog(error_msg)
-        } else {
-            spell_checker = to_aspell_speller(possible_err)
+            let fileMan = FileManager()
+            if !fileMan.fileExists(atPath:aspell_conf_path) {
+                let serviceBundle = Bundle(for: MYSpellCheckerDelegate.self)
+                let confName = "aspell." + langCode + ".conf"
+                aspell_conf_path = (serviceBundle.resourceURL?.appendingPathComponent(confName).path)!
+            }
+            let spell_config = aspellSpellConfig(confPath: aspell_conf_path)
+            // instantiate spell checker
+            let possible_err = new_aspell_speller(spell_config)
+            let this_spell_checker: OpaquePointer?
+            if aspell_error_number(possible_err) != 0 {
+                let error_msg = String(cString: aspell_error_message(possible_err))
+                NSLog(error_msg)
+                continue
+            } else {
+                this_spell_checker =  to_aspell_speller(possible_err)
+                aspell_spell_checkers[langCode] = this_spell_checker
+            }
             // sync word list
             let sysListDir = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true).appendingPathComponent("Library/Spelling")
-            let sysListPath = sysListDir.appendingPathComponent(langName).path
+            let sysListPath = sysListDir.appendingPathComponent(LanguageCodeHandler.convertLangCode(langCode)).path
             let aspellListDir = URL(fileURLWithPath: String(cString: aspell_config_retrieve(spell_config, "home-dir")))
             let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
             let aspellListPath = aspellListDir.appendingPathComponent(aspellFileName).path
             if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDir.path) {
-                syncPersonalWordList(spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
+                syncPersonalWordList(this_spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
             } else {
                 NSLog("Configured to use word list at \(aspellListPath), but something is wrong either with this or the system list \(sysListPath)")
             }
             // instantiate doc checker
-            let possible_err_doc = new_aspell_document_checker(spell_checker)
+            let possible_err_doc = new_aspell_document_checker(this_spell_checker)
             if (aspell_error_number(possible_err_doc) != 0) {
                 let error_msg_doc = String(cString:aspell_error_message(possible_err_doc))
                 NSLog(error_msg_doc)
             } else {
-                doc_checker = to_aspell_document_checker(possible_err_doc)
+                aspell_doc_checkers[langCode] = to_aspell_document_checker(possible_err_doc)
             }
         }
-        // clear aspell config
-        delete_aspell_config(spell_config)
         // hand the task to superclass
         super.init()
     }
     
     deinit {
-        delete_aspell_document_checker(doc_checker)
-        delete_aspell_speller(spell_checker)
+//        delete_aspell_document_checker(doc_checker)
+//        delete_aspell_speller(spell_checker)
     }
     
     // 'offset' needs to be added to the offsets of result ranges
@@ -86,7 +76,14 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      options: [String : Any]? = nil,
                      orthography: NSOrthography?,
                      wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
-        guard doc_checker != nil else {
+        let langCode: String
+        if orthography != nil {
+            langCode = orthography!.dominantLanguage
+        } else {
+            langCode = "en"
+        }
+        guard let lang_doc_checker = aspell_doc_checkers[langCode] else {
+            NSLog("Could not get aspell spell checker for \(langCode)")
             return nil
         }
         guard (checkingTypes & NSTextCheckingResult.CheckingType.spelling.rawValue) != 0 else {
@@ -96,10 +93,10 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         // start checking the input
         let utf8Rep = stringToCheck.utf8CString
         utf8Rep.withUnsafeBufferPointer { ptr in
-            aspell_document_checker_process(doc_checker, ptr.baseAddress!, -1)
+            aspell_document_checker_process(lang_doc_checker, ptr.baseAddress!, -1)
         }
         // if there are no errors, just report the word count
-        var error_loc = aspell_document_checker_next_misspelling(doc_checker)
+        var error_loc = aspell_document_checker_next_misspelling(lang_doc_checker)
         if error_loc.len == 0 {
             wordCount.pointee = countWords(stringToCheck)
             return nil
@@ -125,17 +122,18 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let thisRange = NSRange(location: offset + beforeThisMissLen, length: missLen)
             // add this range and continue to next error
             spellRes.append(NSTextCheckingResult.spellCheckingResult(range: thisRange))
-            error_loc = aspell_document_checker_next_misspelling(doc_checker)
+            error_loc = aspell_document_checker_next_misspelling(lang_doc_checker)
         } while (error_loc.len != 0)
         return spellRes
     }
     func spellServer(_ sender: NSSpellServer,
                      suggestGuessesForWord word: String,
                      inLanguage language: String) -> [String]? {
-        guard spell_checker != nil else {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+            NSLog("Could not get aspell spell checker for \(language)")
             return nil
         }
-        let suggestions = aspell_speller_suggest(spell_checker, word, -1)
+        let suggestions = aspell_speller_suggest(lang_spell_checker, word, -1)
         let elements = aspell_word_list_elements(suggestions)
         var nextWordPtr = aspell_string_enumeration_next(elements)
         var suggestedWords = [String]()
@@ -157,11 +155,12 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      language: String,
                      wordCount: UnsafeMutablePointer<Int>,
                      countOnly: Bool) -> NSRange {
-        guard spell_checker != nil else {
-            return NSRange(location: NSNotFound, length: 0)
-        }
         if countOnly {
             wordCount.pointee = countWords(stringToCheck)
+            return NSRange(location: NSNotFound, length: 0)
+        }
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+            NSLog("Could not get aspell spell checker for \(language)")
             return NSRange(location: NSNotFound, length: 0)
         }
         // split into words, ignore punctuations except backslash (tex)
@@ -179,7 +178,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                 continue
             }
             // return range of first unknown word
-            if 0 == aspell_speller_check(spell_checker, wordToCheck, -1) {
+            if 0 == aspell_speller_check(lang_spell_checker, wordToCheck, -1) {
                 let strToCheckAsNSStr = stringToCheck as NSString
                 let matchRan = strToCheckAsNSStr.range(of: wordToCheck)
                 return matchRan
@@ -197,10 +196,14 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+            NSLog("Could not get aspell spell checker for \(language)")
+            return
+        }
         NSLog("learning \(word)")
         let utf8Rep = word.utf8CString
         _ = utf8Rep.withUnsafeBufferPointer { ptr in
-            aspell_speller_add_to_session(spell_checker, ptr.baseAddress!, -1)
+            aspell_speller_add_to_session(lang_spell_checker, ptr.baseAddress!, -1)
         }
     }
 //    func spellServer(_ sender: NSSpellServer,
@@ -215,6 +218,10 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      toCorrection correction: String,
                      forWord word: String,
                      language: String) {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+            NSLog("Could not get aspell spell checker for \(language)")
+            return
+        }
         NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
         switch response {
         case NSCorrectionResponse.accepted.rawValue:
@@ -223,7 +230,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let corrUtf8Rep = correction.utf8CString
             _ = wordUtf8Rep.withUnsafeBufferPointer { wrdPtr in
                 corrUtf8Rep.withUnsafeBufferPointer{ corrPtr in
-                    aspell_speller_store_replacement(spell_checker, wrdPtr.baseAddress!, -1, corrPtr.baseAddress!, -1)
+                    aspell_speller_store_replacement(lang_spell_checker, wrdPtr.baseAddress!, -1, corrPtr.baseAddress!, -1)
                 }
             }
         default: break
@@ -266,18 +273,54 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
         NSLog("Could not read from aspell conf file \(confPath)")
         return
     }
+    var langCode = "en"
     let confList = confStr.components(separatedBy: CharacterSet.newlines)
     for (_, line) in confList.enumerated() {
         guard let firstSpace = line.rangeOfCharacter(from: CharacterSet.whitespaces) else {
             continue
         }
         let keyStr = line.substring(to: firstSpace.lowerBound)
-        let valStr = line.substring(from: firstSpace.upperBound)
+        var valStr = line.substring(from: firstSpace.upperBound)
         if (keyStr == "" || valStr == "") {
             continue
         }
+        if keyStr == "lang" {
+            langCode = valStr
+        }
+        let serviceBundle = Bundle(for: MYSpellCheckerDelegate.self)
+        if valStr == "$MakoSpellBundleDictDir" {
+            let dictsDirURL = serviceBundle.resourceURL?.appendingPathComponent("dict")
+            valStr = (dictsDirURL?.appendingPathComponent(langCode).path)!
+        }
+        if valStr == "$MakoSPellBundleDataDir" {
+            valStr = (serviceBundle.resourceURL?.appendingPathComponent("data").path)!
+        }
+        let homeDirMatch = valStr.range(of: "$HOME")
+        if homeDirMatch != nil {
+            valStr.replaceSubrange(homeDirMatch!, with: NSHomeDirectory())
+        }
         aspell_config_replace(confPtr, keyStr, valStr)
     }
+}
+
+func aspellSpellConfig(confPath: String) -> OpaquePointer? {
+    let spell_config = new_aspell_config()
+    let fileMan = FileManager()
+    if fileMan.fileExists(atPath: confPath) {
+        propagateAspellConf(confPath: confPath, confPtr: spell_config!)
+    } else {
+        NSLog("Could not find Aspell config file \(confPath)")
+    }
+    // want input encoding to be UTF-8
+    let encoding_name = String(cString:aspell_config_retrieve(spell_config, "encoding"))
+    if encoding_name != "utf-8" {
+        if encoding_name == "none" {
+            aspell_config_replace(spell_config, "encoding", "utf-8")
+        } else {
+            NSLog("Aspell conf has encoding \(encoding_name), but Mac OS X spell system would give UTF-8 data (like non-breaking space 0xc2 0xa0)")
+        }
+    }
+    return spell_config
 }
 
 // reads system word list (newline separated) and add words to aspell which are not in the user list
@@ -335,5 +378,13 @@ struct LanguageCodeHandler {
         }
         NSLog("Unknown ISO 639 code \(code) was queried.")
         return "English"
+    }
+    static func getLangCode(lang: String) -> String {
+        for (langCode, langName) in codeDict {
+            if lang.contains(langName) {
+                return langCode
+            }
+        }
+        return "zu"
     }
 }
