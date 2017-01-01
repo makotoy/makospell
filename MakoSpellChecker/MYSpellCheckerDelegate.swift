@@ -58,6 +58,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             } else {
                 aspell_doc_checkers[langCode] = to_aspell_document_checker(possible_err_doc)
             }
+            delete_aspell_config(spell_config)
         }
         // hand the task to superclass
         super.init()
@@ -78,7 +79,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      wordCount: UnsafeMutablePointer<Int>) -> [NSTextCheckingResult]? {
         let langCode: String
         if orthography != nil {
-            langCode = orthography!.dominantLanguage
+            langCode = LanguageCodeHandler.langCode(for: orthography!.dominantLanguage)
         } else {
             langCode = "en"
         }
@@ -129,7 +130,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      suggestGuessesForWord word: String,
                      inLanguage language: String) -> [String]? {
-        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.langCode(for: language)] else {
             NSLog("Could not get aspell spell checker for \(language)")
             return nil
         }
@@ -159,7 +160,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             wordCount.pointee = countWords(stringToCheck)
             return NSRange(location: NSNotFound, length: 0)
         }
-        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.langCode(for: language)] else {
             NSLog("Could not get aspell spell checker for \(language)")
             return NSRange(location: NSNotFound, length: 0)
         }
@@ -196,7 +197,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     func spellServer(_ sender: NSSpellServer,
                      didLearnWord word: String,
                      inLanguage language: String) {
-        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.langCode(for: language)] else {
             NSLog("Could not get aspell spell checker for \(language)")
             return
         }
@@ -218,7 +219,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
                      toCorrection correction: String,
                      forWord word: String,
                      language: String) {
-        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.getLangCode(lang: language)] else {
+        guard let lang_spell_checker = aspell_spell_checkers[LanguageCodeHandler.langCode(for: language)] else {
             NSLog("Could not get aspell spell checker for \(language)")
             return
         }
@@ -303,6 +304,7 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
     }
 }
 
+// caller is resposibile to delete the config pointer
 func aspellSpellConfig(confPath: String) -> OpaquePointer? {
     let spell_config = new_aspell_config()
     let fileMan = FileManager()
@@ -379,12 +381,12 @@ struct LanguageCodeHandler {
         NSLog("Unknown ISO 639 code \(code) was queried.")
         return "English"
     }
-    static func getLangCode(lang: String) -> String {
+    static func langCode(for lang: String) -> String {
         for (langCode, langName) in codeDict {
             if lang.contains(langName) {
                 return langCode
             }
         }
-        return "zu"
+        return "en"
     }
 }

@@ -173,6 +173,6 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(LanguageCodeHandler.convertLangCode("en") == "English")
         XCTAssert(LanguageCodeHandler.convertLangCode("en_US") == "English")
         XCTAssert(LanguageCodeHandler.convertLangCode("de") == "German")
-        XCTAssert(LanguageCodeHandler.getLangCode(lang: "English") == "en")
+        XCTAssert(LanguageCodeHandler.langCode(for: "English") == "en")
     }
 }
