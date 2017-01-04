@@ -22,11 +22,13 @@ Follow these steps to build this file:
 3. In order to successfully build Aspell, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
 4. `cd` to `aspell-0.60.6.1` directory and do
 
-        $ ./configure --see-below-for-options
+        $ ./configure --enable-compile-in-filters
         $ make
-        $ make install
+5. `cd` to `external-libs` and do
+        $ mkdir -p dict/data
+        $ cp aspell-0.60.6.1/data/* dict/data/
 
-which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory, and install `aspell` under `$PREFIX/bin`.
+which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory.
 
 #### Tips for compling Aspell command
 
@@ -46,14 +48,14 @@ You then need to prepare word lists.
 3. If you already have `.aspell.conf` file, temporarily rename it to something else.
 4. cd to `aspell6-en-2016.11.20-0` and do
 
-        $ ./configure --vars DESTDIR=/path/to/proj/external-libs/dict/ ASPELL_FLAGS="--per-conf=/path/to/proj/external-libs/aspell.en.dict-compile.conf --data-dir=/path/to/proj/external-libs/aspell-0.60.6.1/data --dict-dir=/path/to/proj/external-libs/dict/fr" ASPELL="/path/to/aspell --per-conf=/path/to/proj/external-libs/aspell.en.dict-compile.conf"
+        $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf"
         $ make
         $ make install
 
 This should install English dictionary files under `external-libs/dict/en`. Then repeat the same for French dictionary. However, the configure script is missing a line to process options, so copy the modified one from `external-libs` first.
 
     $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
-    $ ./configure-fr DESTDIR=/path/to/proj/external-libs/dict/ ASPELL_FLAGS="--per-conf=/path/to/proj/external-libs/aspell.fr.dict-compile.conf --data-dir=/path/to/proj/external-libs/aspell-0.60.6.1/data --dict-dir=/path/to/proj/external-libs/dict/fr" ASPELL="/path/to/aspell --per-conf=/path/to/proj/external-libs/aspell.fr.dict-compile.conf"
+    $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
 
 Then create config file `~/.aspell.conf` for Aspell if you don't have it yet.
 Here is an sample:

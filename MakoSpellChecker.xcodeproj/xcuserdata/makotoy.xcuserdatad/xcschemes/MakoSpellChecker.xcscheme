@@ -95,7 +95,7 @@
          <EnvironmentVariable
             key = "MYSpellCheckerAspellConf"
             value = "$(HOME)/.aspell.conf"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>
