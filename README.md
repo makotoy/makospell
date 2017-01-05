@@ -6,7 +6,8 @@ This project aims to provide a way to use GNU Aspell spellchecker from applicati
 
 ## How to build
 
-The project requires aspell library (`libaspell.dylib`) and aspell data files. As for the library, there are two ways:
+The project requires aspell library (`libaspell.dylib`) and aspell data files.
+As for the library, there are two ways:
 
 1. Put aspell source codes under `external-libs` directory.
 2. Change Xcode reference to existing aspell library.
@@ -35,6 +36,7 @@ which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.lib
 
 #### Tips for compling Aspell command
 
+This is not required for building the project, but you might still want to install the standalone `aspell` utility.
 You need `--enable-compile-in-filters` flag for `configure` script to build in filters such as `tex` and `email` (modes seem to be broken in Aspell 0.60).
 Use the following commands to install `aspell` command under your home directory.
 These also install library and header files.
@@ -43,26 +45,7 @@ These also install library and header files.
     $ make
     $ make install
 
-### Compiling dictionaries
-
-You then need to prepare word lists.
-
-1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
-2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
-   This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
-3. If you already have `.aspell.conf` file, temporarily rename it to something else.
-4. cd to `aspell6-en-2016.11.20-0` and do
-
-        $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf"
-        $ make
-        $ make install
-
-This should install English dictionary files under `external-libs/dict/en`. Then repeat the same for French dictionary. However, the configure script is missing a line to process options, so copy the modified one from `external-libs` first.
-
-    $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
-    $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
-
-Then create config file `~/.aspell.conf` for Aspell if you don't have it yet.
+Then create config file `~/.aspell.conf`.
 Here is an sample:
 
     lang en_US
@@ -84,6 +67,26 @@ Here is an sample:
 You can set `MYSpellCheckerAspellConf` environment variable to use different config file.
 See [this Stack Overflow thread](http://stackoverflow.com/questions/25385934/setting-environment-variables-via-launchd-conf-no-longer-works-in-os-x-yosemite/26586170#26586170) for how to set environment variables at login.
 
+### Compiling dictionaries
+
+You then need to prepare word lists.
+
+1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
+2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
+   This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
+3. If you already have `.aspell.conf` file, temporarily rename it to something else.
+4. cd to `aspell6-en-2016.11.20-0` and do
+
+        $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf"
+        $ make
+        $ make install
+
+This should install English dictionary files under `external-libs/dict/en`.
+Then repeat the same for French dictionary.
+However, the configure script is missing a line to process options, so copy the modified one from `external-libs` first.
+
+    $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
+    $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
 
 ### Referencing existing Aspell library
 
