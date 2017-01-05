@@ -6,10 +6,12 @@ This project aims to provide a way to use GNU Aspell spellchecker from applicati
 
 ## How to build
 
-The project requires aspell library (`libaspell.dylib`). There are two ways:
+The project requires aspell library (`libaspell.dylib`) and aspell data files. As for the library, there are two ways:
 
 1. Put aspell source codes under `external-libs` directory.
 2. Change Xcode reference to existing aspell library.
+
+As for the data files, if you have aspell already, it is possible to use the installed files via `~/.aspell.config`.
 
 ### Compiling Aspell library from source
 
@@ -25,6 +27,7 @@ Follow these steps to build this file:
         $ ./configure --enable-compile-in-filters
         $ make
 5. `cd` to `external-libs` and do
+
         $ mkdir -p dict/data
         $ cp aspell-0.60.6.1/data/* dict/data/
 
@@ -39,6 +42,8 @@ These also install library and header files.
     $ ./configure --prefix=${HOME} --enable-compile-in-filters
     $ make
     $ make install
+
+### Compiling dictionaries
 
 You then need to prepare word lists.
 
