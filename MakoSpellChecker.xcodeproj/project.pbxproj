@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		082095751E002DC4007D8957 /* test1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 082095731E002DC4007D8957 /* test1.txt */; };
 		082095761E002DC4007D8957 /* test2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 082095741E002DC4007D8957 /* test2.txt */; };
+		083D91111E1F254300BDA8E2 /* aspell.de.conf in Resources */ = {isa = PBXBuildFile; fileRef = 083D91101E1F254300BDA8E2 /* aspell.de.conf */; };
+		083D91121E1F255F00BDA8E2 /* aspell.de.conf in Resources */ = {isa = PBXBuildFile; fileRef = 083D91101E1F254300BDA8E2 /* aspell.de.conf */; };
 		08581E511E01FCE50009B6AD /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
 		089877651DF6EA1900C371FD /* libaspell.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; };
 		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
@@ -41,6 +43,7 @@
 /* Begin PBXFileReference section */
 		082095731E002DC4007D8957 /* test1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test1.txt; sourceTree = "<group>"; };
 		082095741E002DC4007D8957 /* test2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test2.txt; sourceTree = "<group>"; };
+		083D91101E1F254300BDA8E2 /* aspell.de.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = aspell.de.conf; path = "external-libs/aspell.de.conf"; sourceTree = SOURCE_ROOT; };
 		089877631DF6E95100C371FD /* aspell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aspell.h; path = "external-libs/aspell-0.60.6.1/interfaces/cc/aspell.h"; sourceTree = SOURCE_ROOT; };
 		089877641DF6EA1900C371FD /* libaspell.15.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libaspell.15.dylib; path = "external-libs/aspell-0.60.6.1/.libs/libaspell.15.dylib"; sourceTree = SOURCE_ROOT; };
 		08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MakoSpellChecker-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
@@ -113,6 +116,7 @@
 				08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */,
 				08BB90841DC611380045E375 /* Info.plist */,
 				08D53AA31E17218B0079A16E /* aspell.fr.conf */,
+				083D91101E1F254300BDA8E2 /* aspell.de.conf */,
 				08C33F771E14F0D5002E0A51 /* aspell.en.conf */,
 				08AF3C881DD5E1FD004E5BFF /* MakoSpellChecker-Bridging-Header.h */,
 			);
@@ -249,6 +253,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				083D91111E1F254300BDA8E2 /* aspell.de.conf in Resources */,
 				08C33F781E14F0D5002E0A51 /* aspell.en.conf in Resources */,
 				08D53AA41E17218B0079A16E /* aspell.fr.conf in Resources */,
 			);
@@ -267,6 +272,7 @@
 			files = (
 				08D53AA51E1721B50079A16E /* aspell.en.conf in Resources */,
 				08D53AA61E1721B50079A16E /* aspell.fr.conf in Resources */,
+				083D91121E1F255F00BDA8E2 /* aspell.de.conf in Resources */,
 				082095751E002DC4007D8957 /* test1.txt in Resources */,
 				082095761E002DC4007D8957 /* test2.txt in Resources */,
 			);

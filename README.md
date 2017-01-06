@@ -82,8 +82,8 @@ You then need to prepare word lists.
         $ make install
 
 This should install English dictionary files under `external-libs/dict/en`.
-Then repeat the same for French dictionary.
-However, the configure script is missing a line to process options, so copy the modified one from `external-libs` first.
+Then repeat the same for French and German dictionaries.
+However, the configure script for French is missing a line to process options, so copy the modified one from `external-libs` first.
 
     $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
     $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"

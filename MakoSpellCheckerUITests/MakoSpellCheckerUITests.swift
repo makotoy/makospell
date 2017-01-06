@@ -50,6 +50,22 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(resRange.location == NSNotFound)
     }
     
+    func testFrench() {
+        var dummyCounter: Int = 0
+        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "English", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(resRange.location != NSNotFound)
+        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "French", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(resRange.location == NSNotFound)
+    }
+    
+    func testGerman() {
+        var dummyCounter: Int = 0
+        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "English", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(resRange.location != NSNotFound)
+        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "German", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(resRange.location == NSNotFound)
+    }
+    
     func testTexIgnore() {
         var dummyCounter: Int = 0
         let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "text \\texmacro bar", language: "English", wordCount: &dummyCounter, countOnly: false)

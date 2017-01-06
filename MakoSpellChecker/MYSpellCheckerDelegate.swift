@@ -12,7 +12,7 @@ import AppKit
 class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     var aspell_spell_checkers: [String: OpaquePointer] = [:]
     var aspell_doc_checkers: [String: OpaquePointer] = [:]
-    let langCodes = ["en", "fr"]
+    let langCodes = ["en", "fr", "de"]
     
     override init() {
         for langCode in langCodes {
@@ -165,7 +165,9 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             return NSRange(location: NSNotFound, length: 0)
         }
         // split into words, ignore punctuations except backslash (tex)
-        let nonalphas = CharacterSet(charactersIn: "A"..."z").inverted
+        let basicLatin = CharacterSet(charactersIn: "A"..."z")
+        let latin1SuppToExtB = CharacterSet(charactersIn: "À"..."ɏ")
+        let nonalphas = basicLatin.union(latin1SuppToExtB).inverted
         var wordBdry = CharacterSet.letters.inverted
         wordBdry.remove(charactersIn:"\\")
         let wordsArray = stringToCheck.components(separatedBy: wordBdry)
