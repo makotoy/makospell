@@ -3,7 +3,7 @@
 //  MakoSpellChecker
 //
 //  Created by Makoto Yamashita on ’16.10.30.
-//  Copyright © 2016 Makoto Yamashita. All rights reserved.
+//  Copyright © 2016–2017 Makoto Yamashita. All rights reserved.
 //
 
 import Foundation
@@ -15,19 +15,27 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
     let langCodes = ["en", "fr", "de"]
     
     override init() {
+        let fileMan = FileManager()
+        let envDic = ProcessInfo().environment
+        let homeURL = URL(fileURLWithPath: NSHomeDirectory())
+        var aspell_conf_path_per_lang: [String: String] = [:]
+        var aspell_default_conf_path = homeURL.appendingPathComponent(".aspell.conf").path
+        if envDic["MYSpellCheckerAspellConf"] != nil {
+            aspell_default_conf_path = envDic["MYSpellCheckerAspellConf"]!
+        }
+        if fileMan.fileExists(atPath: aspell_default_conf_path) {
+            aspell_conf_path_per_lang[langCodeForConf(path: aspell_default_conf_path)] = aspell_default_conf_path
+        }
         for langCode in langCodes {
-            var aspell_conf_path = (NSHomeDirectory() as NSString).appendingPathComponent(".aspell.conf")
-            let env_var_dic = ProcessInfo().environment
-            if env_var_dic["MYSpellCheckerAspellConf"] != nil {
-                aspell_conf_path = env_var_dic["MYSpellCheckerAspellConf"]!
-            }
-            let fileMan = FileManager()
-            if !fileMan.fileExists(atPath:aspell_conf_path) {
+            var this_lang_conf: String
+            if aspell_conf_path_per_lang[langCode] != nil {
+                this_lang_conf = aspell_conf_path_per_lang[langCode]!
+            } else {
                 let serviceBundle = Bundle(for: MYSpellCheckerDelegate.self)
                 let confName = "aspell." + langCode + ".conf"
-                aspell_conf_path = (serviceBundle.resourceURL?.appendingPathComponent(confName).path)!
+                this_lang_conf = (serviceBundle.resourceURL?.appendingPathComponent(confName).path)!
             }
-            let spell_config = aspellSpellConfig(confPath: aspell_conf_path)
+            let spell_config = aspellSpellConfig(confPath:this_lang_conf)
             // instantiate spell checker
             let possible_err = new_aspell_speller(spell_config)
             let this_spell_checker: OpaquePointer?
@@ -47,8 +55,6 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             let aspellListPath = aspellListDir.appendingPathComponent(aspellFileName).path
             if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDir.path) {
                 syncPersonalWordList(this_spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
-            } else {
-                NSLog("Configured to use word list at \(aspellListPath), but something is wrong either with this or the system list \(sysListPath)")
             }
             // instantiate doc checker
             let possible_err_doc = new_aspell_document_checker(this_spell_checker)
@@ -271,6 +277,21 @@ func hexDump(_ ui8seq: String.UTF8View) -> String {
     return resStrList.joined(separator: " ")
 }
 
+func langCodeForConf(path: String) -> String {
+    guard let confStr = try? String(contentsOfFile: path, encoding: String.Encoding.utf8) else {
+        NSLog("Could not read from aspell conf file \(path)")
+        return "en"
+    }
+    let confList = confStr.components(separatedBy: CharacterSet.newlines)
+    for (_, line) in confList.enumerated() {
+        if line.hasPrefix("lang ") {
+            let langConf = line.substring(from: "lang ".endIndex)
+            return langConf.substring(to: "en".endIndex)
+        }
+    }
+    return "en"
+}
+
 func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
     guard let confStr = try? String(contentsOfFile: confPath, encoding: String.Encoding.utf8) else {
         NSLog("Could not read from aspell conf file \(confPath)")
@@ -314,6 +335,7 @@ func aspellSpellConfig(confPath: String) -> OpaquePointer? {
         propagateAspellConf(confPath: confPath, confPtr: spell_config!)
     } else {
         NSLog("Could not find Aspell config file \(confPath)")
+        return nil
     }
     // want input encoding to be UTF-8
     let encoding_name = String(cString:aspell_config_retrieve(spell_config, "encoding"))

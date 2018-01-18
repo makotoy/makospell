@@ -3,7 +3,7 @@
 //  MakoSpellCheckerTests
 //
 //  Created by Makoto Yamashita on ’16.10.30.
-//  Copyright © 2016 Makoto Yamashita. All rights reserved.
+//  Copyright © 2016–2017 Makoto Yamashita. All rights reserved.
 //
 
 import XCTest

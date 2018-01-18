@@ -3,7 +3,7 @@
 //  MakoSpellCheckerUITests
 //
 //  Created by Makoto Yamashita on ’16.10.30.
-//  Copyright © 2016 Makoto Yamashita. All rights reserved.
+//  Copyright © 2016–2017 Makoto Yamashita. All rights reserved.
 //
 
 import XCTest
@@ -50,6 +50,16 @@ class MakoSpellCheckerUITests: XCTestCase {
         XCTAssert(resRange.location == NSNotFound)
     }
     
+    func testConfPath() {
+        let serviceBundle = Bundle(for: MYSpellCheckerDelegate.self)
+        let confName = "aspell.en.conf"
+        let langConfPath = (serviceBundle.resourceURL?.appendingPathComponent(confName).path)!
+        XCTAssert("en" == langCodeForConf(path: langConfPath))
+        let frConfName = "aspell.fr.conf"
+        let frLangConfPath = (serviceBundle.resourceURL?.appendingPathComponent(frConfName).path)!
+        XCTAssert("fr" == langCodeForConf(path: frLangConfPath))
+
+    }
     func testFrench() {
         var dummyCounter: Int = 0
         var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "English", wordCount: &dummyCounter, countOnly: false)
