@@ -120,7 +120,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             }
             let beforeThisMissLen = (beforeThisMiss as NSString).length
             // get length (in NSString) of error
-            let fromMissView: String.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
+            let fromMissView: Substring.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
             guard let thisMissWord = String(fromMissView.prefix(Int(error_loc.len))) else {
                 NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(stringToCheck.utf8))")
                     continue
@@ -233,7 +233,7 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         }
         NSLog("recordResponse called with code \(response) with correction \(correction) for word \(word)")
         switch response {
-        case NSCorrectionResponse.accepted.rawValue:
+        case NSSpellChecker.CorrectionResponse.accepted.rawValue:
             NSLog("accepted correction \(correction) for \(word)")
             let wordUtf8Rep = word.utf8CString
             let corrUtf8Rep = correction.utf8CString
