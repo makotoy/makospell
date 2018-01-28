@@ -285,8 +285,10 @@ func langCodeForConf(path: String) -> String {
     let confList = confStr.components(separatedBy: CharacterSet.newlines)
     for (_, line) in confList.enumerated() {
         if line.hasPrefix("lang ") {
-            let langConf = line.substring(from: "lang ".endIndex)
-            return langConf.substring(to: "en".endIndex)
+            let startIndex = "lang ".endIndex
+            let endIndex = line.index(startIndex, offsetBy:"en".count)
+            let langCode = line[startIndex..<endIndex]
+            return String(langCode)
         }
     }
     return "en"
@@ -303,8 +305,8 @@ func propagateAspellConf(confPath: String, confPtr: OpaquePointer) {
         guard let firstSpace = line.rangeOfCharacter(from: CharacterSet.whitespaces) else {
             continue
         }
-        let keyStr = line.substring(to: firstSpace.lowerBound)
-        var valStr = line.substring(from: firstSpace.upperBound)
+        let keyStr = String(line[..<firstSpace.lowerBound])
+        var valStr = String(line[firstSpace.upperBound...])
         if (keyStr == "" || valStr == "") {
             continue
         }
