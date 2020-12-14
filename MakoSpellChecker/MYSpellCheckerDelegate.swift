@@ -3,7 +3,7 @@
 //  MakoSpellChecker
 //
 //  Created by Makoto Yamashita on ’16.10.30.
-//  Copyright © 2016–2017 Makoto Yamashita. All rights reserved.
+//  Copyright © 2016–2018 Makoto Yamashita. All rights reserved.
 //
 
 import Foundation
@@ -265,14 +265,6 @@ func hexDump<T: Sequence>(_ ui8seq: T) -> String where T.Iterator.Element == UIn
 func hexDump<T: Sequence>(_ si8seq: T) -> String where T.Iterator.Element == Int8 {
     let resStrList = si8seq.map { byte in
         String(format: "%02x", UInt8(byte))
-    }
-    return resStrList.joined(separator: " ")
-}
-
-// cannot resolve above in unit test
-func hexDump(_ ui8seq: String.UTF8View) -> String {
-    let resStrList = ui8seq.map { byte in
-        String(format: "%02x", byte)
     }
     return resStrList.joined(separator: " ")
 }
