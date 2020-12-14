@@ -26,6 +26,7 @@ Follow these steps to build this file:
 
         $ ./configure --enable-compile-in-filters
         $ make
+        $ cd .libs
         $ install_name_tool -id @rpath/libaspell.15.dylib libaspell.15.dylib
 4. `cd` to `external-libs` and do
 
