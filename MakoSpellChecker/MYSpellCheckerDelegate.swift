@@ -115,14 +115,14 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
         repeat {
             // get offset (in NSString) of error
             guard let beforeThisMiss = String(stringToCheck.utf8.prefix(Int(error_loc.offset))) else {
-                NSLog("Could not convert string portion before misstake, offset \(error_loc.offset) in utf8 \(hexDump(stringToCheck.utf8))")
+                NSLog("Could not convert string portion before mistake, offset \(error_loc.offset) in utf8 \(hexDump(stringToCheck.utf8))")
                 continue
             }
             let beforeThisMissLen = (beforeThisMiss as NSString).length
             // get length (in NSString) of error
             let fromMissView: Substring.UTF8View = stringToCheck.utf8.dropFirst(Int(error_loc.offset))
             guard let thisMissWord = String(fromMissView.prefix(Int(error_loc.len))) else {
-                NSLog("Could not convert missspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(stringToCheck.utf8))")
+                NSLog("Could not convert misspell, offset \(error_loc.offset), len \(error_loc.len) in utf8 \(hexDump(stringToCheck.utf8))")
                     continue
             }
             let missLen = (thisMissWord as NSString).length
