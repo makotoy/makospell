@@ -16,23 +16,23 @@ As for the data files, if you have aspell already, it is possible to use the ins
 
 ### Compiling Aspell library from source
 
-By default, the Xcode project contains a reference to `external-libs/aspell-0.60.6.1/.libs/libaspell.15.dylib`.
+By default, the Xcode project contains a reference to `external-libs/aspell-0.60.8/.libs/libaspell.15.dylib`.
 Follow these steps to build this file:
 
 1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
-2. Place the directory `aspell-0.60.6.1` inside `external-libs`.
+2. Place the directory `aspell-0.60.8` inside `external-libs`.
    This directory has `.gitignore` so that the aspell directory is not synced by git.
-3. In order to successfully build Aspell, you need to copy `aspell.h` file in `external-libs` to `aspell-0.60.6.1/interfaces/cc`.
-4. `cd` to `aspell-0.60.6.1` directory and do
+3. `cd` to `aspell-0.60.8` directory and do
 
         $ ./configure --enable-compile-in-filters
         $ make
-5. `cd` to `external-libs` and do
+        $ install_name_tool -id @rpath/libaspell.15.dylib libaspell.15.dylib
+4. `cd` to `external-libs` and do
 
         $ mkdir -p dict/data
         $ cp aspell-0.60.6.1/data/* dict/data/
 
-which should compile the library file `libaspell.dylib` in `aspell-0.60.6.1/.libs` directory.
+This should compile the library file `libaspell.dylib` in `aspell-0.60.8/.libs` directory.
 
 #### Tips for compling Aspell command
 
