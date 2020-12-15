@@ -19,7 +19,7 @@ As for the data files, if you have aspell already, it is possible to use the ins
 By default, the Xcode project contains a reference to `external-libs/aspell-0.60.8/.libs/libaspell.15.dylib`.
 Follow these steps to build this file:
 
-1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.6.1).
+1. Download aspell source from [Aspell website](http://aspell.net/) (current version is 0.60.8).
 2. Place the directory `aspell-0.60.8` inside `external-libs`.
    This directory has `.gitignore` so that the aspell directory is not synced by git.
 3. `cd` to `aspell-0.60.8` directory and do
@@ -31,7 +31,7 @@ Follow these steps to build this file:
 4. `cd` to `external-libs` and do
 
         $ mkdir -p dict/data
-        $ cp aspell-0.60.6.1/data/* dict/data/
+        $ cp aspell-0.60.8/data/* dict/data/
 
 This should compile the library file `libaspell.dylib` in `aspell-0.60.8/.libs` directory.
 
@@ -61,7 +61,7 @@ Here is an sample:
 
 * `dict-dir` is the directory containing `.cwl`, `.rws`, `.multi`, `.alias` files.
 * `data-dir` is the directory containing `.cset` and `.cmap` files.
-  This is `external-libs/aspell-0.60.6.1/data` in the project directory, but `make install` (see next section) will install it under `${PREFIX}/lib`.
+  This is `external-libs/aspell-0.60.8/data` in the project directory, but `make install` (see next section) will install it under `${PREFIX}/lib`.
 * `home-dir` is the directory containing the personal word list file `en.pws`.
 * `encoding` needs to be `utf-8`, as we need to assume that only Unicode can represent the possible input (such as non-breaking space) from Mac OS X.
 
@@ -78,7 +78,7 @@ You then need to prepare word lists.
 3. If you already have `.aspell.conf` file, temporarily rename it to something else.
 4. cd to `aspell6-en-2016.11.20-0` and do
 
-        $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf"
+        $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.8/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.en.dict-compile.conf"
         $ make
         $ make install
 
@@ -87,7 +87,7 @@ Then repeat the same for French and German dictionaries.
 However, the configure script for French is missing a line to process options, so copy the modified one from `external-libs` first.
 
     $ cp /path/to/proj/external-libs/configure-fr /path/to/proj/external-libs/aspell-fr-0.50-3
-    $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.6.1/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
+    $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.8/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
 
 ### Referencing existing Aspell library
 
