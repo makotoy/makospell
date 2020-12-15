@@ -13,6 +13,8 @@
 		083D91121E1F255F00BDA8E2 /* aspell.de.conf in Resources */ = {isa = PBXBuildFile; fileRef = 083D91101E1F254300BDA8E2 /* aspell.de.conf */; };
 		084332E6258839FD00BE9894 /* libaspell.15.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		08581E511E01FCE50009B6AD /* MYSpellCheckerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90A71DC611770045E375 /* MYSpellCheckerDelegate.swift */; };
+		087C327D2588A94B006B5D15 /* libaspell.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; };
+		087C327F2588A959006B5D15 /* libaspell.15.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		089877651DF6EA1900C371FD /* libaspell.15.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 089877641DF6EA1900C371FD /* libaspell.15.dylib */; };
 		08BB908E1DC611380045E375 /* MakoSpellCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB908D1DC611380045E375 /* MakoSpellCheckerTests.swift */; };
 		08BB90991DC611380045E375 /* MakoSpellCheckerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BB90981DC611380045E375 /* MakoSpellCheckerUITests.swift */; };
@@ -51,6 +53,16 @@
 				084332E6258839FD00BE9894 /* libaspell.15.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		087C327E2588A951006B5D15 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				087C327F2588A959006B5D15 /* libaspell.15.dylib in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -96,12 +108,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				087C327D2588A94B006B5D15 /* libaspell.15.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		087C327C2588A94B006B5D15 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		08BB906F1DC611380045E375 = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +129,7 @@
 				08BB908C1DC611380045E375 /* MakoSpellCheckerTests */,
 				08BB90971DC611380045E375 /* MakoSpellCheckerUITests */,
 				08BB90791DC611380045E375 /* Products */,
+				087C327C2588A94B006B5D15 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -206,6 +227,7 @@
 				08BB90911DC611380045E375 /* Frameworks */,
 				08BB90921DC611380045E375 /* Resources */,
 				08D53AA71E1721CC0079A16E /* ShellScript */,
+				087C327E2588A951006B5D15 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -230,7 +252,7 @@
 					08BB90771DC611380045E375 = {
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1220;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					08BB90881DC611380045E375 = {
 						CreatedOnToolsVersion = 8.1;
@@ -241,7 +263,7 @@
 					08BB90931DC611380045E375 = {
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1220;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						TestTargetID = 08BB90771DC611380045E375;
 					};
 				};
@@ -492,7 +514,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.8/interfaces/cc/";
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -500,6 +524,7 @@
 				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -514,7 +539,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.8/interfaces/cc/";
 				INFOPLIST_FILE = MakoSpellChecker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -522,6 +549,7 @@
 				OTHER_LDFLAGS = "-laspell";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellChecker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakoSpellChecker-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -566,13 +594,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.8/.libs";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = MakoSpellChecker;
@@ -584,13 +615,16 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MakoSpellCheckerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/external-libs/aspell-0.60.8/.libs";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = MakoSpellChecker;
