@@ -336,7 +336,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.6.1/data ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/data/\n";
+			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.8/data ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellChecker.service/Contents/Resources/data/\n";
 		};
 		08D53AA71E1721CC0079A16E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
