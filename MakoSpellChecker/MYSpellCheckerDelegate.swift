@@ -49,10 +49,15 @@ class MYSpellCheckerDelegate: NSObject, NSSpellServerDelegate {
             }
             // sync word list
             let sysListDir = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true).appendingPathComponent("Library/Spelling")
-            let sysListPath = sysListDir.appendingPathComponent(LanguageCodeHandler.convertLangCode(langCode)).path
             let aspellListDir = URL(fileURLWithPath: String(cString: aspell_config_retrieve(spell_config, "home-dir")))
             let aspellFileName = String(cString: aspell_config_retrieve(spell_config, "personal"))
             let aspellListPath = aspellListDir.appendingPathComponent(aspellFileName).path
+            // local dictionary file since Ventura
+            let sysLocalDictPath = sysListDir.appendingPathComponent("LocalDictionary").path
+            let sysListPath = sysListDir.appendingPathComponent(LanguageCodeHandler.convertLangCode(langCode)).path
+            if fileMan.fileExists(atPath: sysLocalDictPath) && fileMan.fileExists(atPath: aspellListDir.path) {
+                syncPersonalWordList(this_spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
+            }
             if fileMan.fileExists(atPath: sysListPath) && fileMan.fileExists(atPath: aspellListDir.path) {
                 syncPersonalWordList(this_spell_checker, sysListPath: sysListPath, aspellListPath: aspellListPath)
             }
