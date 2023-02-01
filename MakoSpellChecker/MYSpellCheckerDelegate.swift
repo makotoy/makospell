@@ -405,9 +405,17 @@ struct LanguageCodeHandler {
         return "English"
     }
     static func langCode(for lang: String) -> String {
-        for (langCode, langName) in codeDict {
-            if lang.contains(langName) {
-                return langCode
+        let firstChar = lang[lang.startIndex]
+        let lowers = CharacterSet.lowercaseLetters
+        if firstChar.isLowercase {
+            let endInd = lang.index(lang.startIndex, offsetBy: 2)
+            let langCode = lang[..<endInd]
+            return String(langCode)
+        } else {
+            for (langCode, langName) in codeDict {
+                if lang.contains(langName) {
+                    return langCode
+                }
             }
         }
         return "en"
