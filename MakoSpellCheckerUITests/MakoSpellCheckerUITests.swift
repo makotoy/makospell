@@ -43,7 +43,13 @@ class MakoSpellCheckerUITests: XCTestCase {
         let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "beedybardy bar", language: "English", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(NSEqualRanges(resRange, NSRange(location: 0, length: 10)))
     }
-    
+
+    func testFooCheck2() {
+        var dummyCounter: Int = 0
+        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "beedybardy bar", language: "en_mako", wordCount: &dummyCounter, countOnly: false)
+        XCTAssert(NSEqualRanges(resRange, NSRange(location: 0, length: 10)))
+    }
+
     func testPooCheck() {
         var dummyCounter: Int = 0
         let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "poo bar", language: "English", wordCount: &dummyCounter, countOnly: false)

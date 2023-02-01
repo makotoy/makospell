@@ -12,7 +12,9 @@ let aServer = NSSpellServer()
 let myDelegate = MYSpellCheckerDelegate()
 var didFail = false
 for langCode in myDelegate.langCodes {
-    let successRegisteringLang = aServer.registerLanguage(langCode + "_mako", byVendor: "MakoSpellChecker")
+    let this_lang_code = langCode + "_mako"
+    NSLog("MakoSpell adding lang \(myDelegate.langCodes).")
+    let successRegisteringLang = aServer.registerLanguage(this_lang_code, byVendor: "MakoSpellChecker")
     didFail = didFail || !successRegisteringLang
 }
 if (!didFail) {

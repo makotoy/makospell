@@ -406,7 +406,6 @@ struct LanguageCodeHandler {
     }
     static func langCode(for lang: String) -> String {
         let firstChar = lang[lang.startIndex]
-        let lowers = CharacterSet.lowercaseLetters
         if firstChar.isLowercase {
             let endInd = lang.index(lang.startIndex, offsetBy: 2)
             let langCode = lang[..<endInd]

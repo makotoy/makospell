@@ -35,9 +35,9 @@
 			<string>MakoSpellChecker</string>
 			<key>NSLanguages</key>
 			<array>
-				<string>English</string>
-				<string>French</string>
-				<string>German</string>
+				<string>en_mako</string>
+				<string>fr_mako</string>
+				<string>de_mako</string>
 			</array>
 			<key>NSMenuItem</key>
 			<dict/>
