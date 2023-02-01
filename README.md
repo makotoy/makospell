@@ -85,9 +85,11 @@ You then need to prepare word lists.
 This should install English dictionary files under `external-libs/dict/en`.
 Then repeat the same for French and German dictionaries.
 So, for German you want to:
+
     $ PROJ_DIR=/path/to/proj; ./configure --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.de.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.8/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.de.dict-compile.conf"
     $ make
     $ make install
+
 However, the configure script for French is missing a line to process options, so copy the modified one from `external-libs` first.
 Thus, for French you want to:
 
@@ -95,6 +97,7 @@ Thus, for French you want to:
     $ PROJ_DIR=/path/to/proj; ./configure-fr --vars DESTDIR=${PROJ_DIR}/external-libs/dict/ ASPELL_FLAGS="--per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf --data-dir=${PROJ_DIR}/external-libs/aspell-0.60.8/data" ASPELL="$( which aspell ) --per-conf=${PROJ_DIR}/external-libs/aspell.fr.dict-compile.conf"
     $ make
     $ make install
+
 ### Referencing existing Aspell library
 
 Alternatively, you might already have Aspell (say, from Cocoaspell utility).
