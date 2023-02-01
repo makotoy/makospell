@@ -259,6 +259,7 @@
 					};
 					08BB90881DC611380045E375 = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = USAVSZNNB2;
 						LastSwiftMigration = 1220;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 08BB90771DC611380045E375;
@@ -340,7 +341,7 @@
 		};
 		08D53AA71E1721CC0079A16E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -348,8 +349,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.6.1/data ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/data/\n";
+			shellPath = /bin/zsh;
+			shellScript = "cp -r ${PROJECT_DIR}/external-libs/dict ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/aspell-0.60.8/data ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/\ncp -r ${PROJECT_DIR}/external-libs/dict/data/* ${BUILT_PRODUCTS_DIR}/MakoSpellCheckerUITests-Runner.app/Contents/PlugIns/MakoSpellCheckerUITests.xctest/Contents/Resources/data/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -571,6 +572,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = USAVSZNNB2;
 				INFOPLIST_FILE = MakoSpellCheckerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
@@ -587,6 +589,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = USAVSZNNB2;
 				INFOPLIST_FILE = MakoSpellCheckerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makotoy.MakoSpellCheckerTests;
