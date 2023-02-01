@@ -72,7 +72,7 @@ See [this Stack Overflow thread](http://stackoverflow.com/questions/25385934/set
 
 You then need to prepare word lists.
 
-1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/0index.html.
+1. Download dictionary files from Aspell FTP directory ftp://ftp.gnu.org/gnu/aspell/dict/.
 2. Put the directory, say, `aspell6-en-2016.11.20-0` in `external-libs`.
    This directory is again listed in `.gitignore`, but you might want to update it if there there is an update.
 3. If you already have `.aspell.conf` file, temporarily rename it to something else.
