@@ -68,23 +68,23 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
     func testFrench() {
         var dummyCounter: Int = 0
-        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "English", wordCount: &dummyCounter, countOnly: false)
+        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "en_mako", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location != NSNotFound)
-        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "French", wordCount: &dummyCounter, countOnly: false)
+        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "mot français", language: "fr_mako", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location == NSNotFound)
     }
     
     func testGerman() {
         var dummyCounter: Int = 0
-        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "English", wordCount: &dummyCounter, countOnly: false)
+        var resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "en_mako", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location != NSNotFound)
-        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "German", wordCount: &dummyCounter, countOnly: false)
+        resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "Deutsch Wort", language: "de_mako", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location == NSNotFound)
     }
     
     func testTexIgnore() {
         var dummyCounter: Int = 0
-        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "text \\texmacro bar", language: "English", wordCount: &dummyCounter, countOnly: false)
+        let resRange = checkerDelegate.spellServer(spellServer, findMisspelledWordIn: "text \\texmacro bar", language: "en_mako", wordCount: &dummyCounter, countOnly: false)
         XCTAssert(resRange.location == NSNotFound)
     }
 
@@ -203,9 +203,9 @@ class MakoSpellCheckerUITests: XCTestCase {
     }
     
     func testLangCode() {
-        XCTAssert(LanguageCodeHandler.convertLangCode("en") == "English")
-        XCTAssert(LanguageCodeHandler.convertLangCode("en_US") == "English")
-        XCTAssert(LanguageCodeHandler.convertLangCode("de") == "German")
-        XCTAssert(LanguageCodeHandler.langCode(for: "English") == "en")
+        XCTAssert(LanguageCodeHandler.convertLangCode("en") == "en_mako")
+        XCTAssert(LanguageCodeHandler.convertLangCode("en_US") == "en_mako")
+        XCTAssert(LanguageCodeHandler.convertLangCode("de") == "de_mako")
+        XCTAssert(LanguageCodeHandler.langCode(for: "en_mako") == "en")
     }
 }

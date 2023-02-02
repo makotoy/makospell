@@ -393,7 +393,8 @@ func syncPersonalWordList(_ spellChecker: OpaquePointer?, sysListPath: String, a
 }
 
 struct LanguageCodeHandler {
-    static let codeDict = ["en": "English", "de": "German", "fr": "French"]
+    // this should match the codes in Info.plist
+    static let codeDict = ["en": "en_mako", "de": "de_mako", "fr": "fr_mako"]
     
     static func convertLangCode(_ code: String) -> String {
         for (_, langCode) in codeDict.keys.enumerated() {
